@@ -1,13 +1,16 @@
 import express from 'express';
+const { dbConnection } = require('./utils/database/config')
 
-
-const app = express();
+const app = express()
 app.use(express.json())
 
 app.use('/api/clientes', require('./routers/clientes.routers'))
 app.get('/', (_, res) => {
   console.log('holka')
 })
+dbConnection()
 app.listen(3000, () => {
   console.log('escuchando')
 })
+
+
