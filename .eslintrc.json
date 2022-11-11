@@ -3,7 +3,14 @@
         "es2021": true,
         "node": true
     },
-    "extends": "standard-with-typescript",
+    "plugins": [
+        "@typescript-eslint"
+      ],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+      ],
     "overrides": [
     ],
     "parserOptions": {
@@ -11,5 +18,8 @@
         "sourceType": "module"
     },
     "rules": {
+        "no-empty": 1,
+     "semi": ["error", "always"],
+     "@typescript-eslint/no-explicit-any": ["error", {  "fixToUnknown": true}]
     }
 }
