@@ -1,5 +1,11 @@
 import { Router } from 'express'
-
+import {
+  deleteCliente,
+  getAllClientes,
+  getOneCliente,
+  postCliente,
+  putCliente,
+} from '../controllers/clientes.controller'
 const router = Router()
 
 router.get('/', getAllClientes)
