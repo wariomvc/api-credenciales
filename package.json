@@ -2,10 +2,10 @@
   "name": "api-credenciales",
   "version": "1.0.0",
   "description": "API para el app credenciales",
-  "main": "src/index.js",
+  "main": "src/app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev src/index.ts"
+    "dev": "ts-node-dev src/app.ts"
   },
   "author": "",
   "license": "ISC",
