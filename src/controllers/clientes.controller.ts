@@ -1,8 +1,12 @@
 import { Response, Request } from 'express';
 
-export const getAllClientes = (req: Request, res: Response) => {
+import Cliente from '../models/Cliente';
+
+export const getAllClientes = async (req: Request, res: Response) => {
+  const clientes = await Cliente.findAll();
   res.json({
     msg: 'GetAllClientes',
+    data: clientes,
   });
 };
 

@@ -4,6 +4,7 @@ class Database {
   public db: Sequelize;
   constructor() {
     this.db = new Sequelize({
+      database: 'appcredenciales',
       host: 'localhost',
       dialect: 'mysql',
       username: 'root',
