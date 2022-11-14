@@ -15,7 +15,10 @@ const Cliente = db.define('Cliente', {
   foto: { type: DataTypes.STRING },
   codigo: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
   email: { type: DataTypes.STRING, allowNull: false },
-  loocutor: { type: DataTypes.ENUM('Andres Oviedo', 'Deliz Guerrero', 'Jas Herrera') },
+  locutor: { type: DataTypes.ENUM('Andres Oviedo', 'Deliz Guerrero', 'Jas Herrera') },
 });
 
+Cliente.sync().then(() => {
+  console.log('Modelo Cliente Sincronizado');
+});
 export default Cliente;
