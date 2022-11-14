@@ -15,7 +15,7 @@ export const getOneCliente = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(500).json({
-      errors,
+      errors: errors.mapped(),
     });
   }
   const idParamCliente = req.params.id;
@@ -38,7 +38,7 @@ export const postCliente = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(500).json({
-      errors,
+      errors: errors.mapped(),
     });
   }
   const data = req.body;
@@ -52,7 +52,7 @@ export const putCliente = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(500).json({
-      errors,
+      errors: errors.mapped(),
     });
   }
   const idParamCliente = req.params.id;
@@ -74,7 +74,7 @@ export const deleteCliente = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(500).json({
-      errors,
+      errors: errors.mapped(),
     });
   }
   const idParamCliente = req.params.id;
