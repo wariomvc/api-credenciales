@@ -1,4 +1,5 @@
 import { Response, Request } from 'express'; //Impporta los objetos de las peticiones
+import { validationResult } from 'express-validator';
 
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 
@@ -11,6 +12,12 @@ export const getAllClientes = async (req: Request, res: Response) => {
 };
 
 export const getOneCliente = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(500).json({
+      errors,
+    });
+  }
   const idParamCliente = req.params.id;
   const cliente = await Cliente.findByPk(idParamCliente);
 
@@ -27,6 +34,13 @@ export const getOneCliente = async (req: Request, res: Response) => {
 };
 
 export const postCliente = async (req: Request, res: Response) => {
+  console.log(req.body.email);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(500).json({
+      errors,
+    });
+  }
   const data = req.body;
   const nuevoCliente = await Cliente.create(data);
   return res.json({
@@ -35,6 +49,12 @@ export const postCliente = async (req: Request, res: Response) => {
   });
 };
 export const putCliente = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(500).json({
+      errors,
+    });
+  }
   const idParamCliente = req.params.id;
   const data = req.body;
   const clienteDB = await Cliente.findByPk(idParamCliente);
@@ -51,6 +71,12 @@ export const putCliente = async (req: Request, res: Response) => {
 };
 
 export const deleteCliente = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(500).json({
+      errors,
+    });
+  }
   const idParamCliente = req.params.id;
   const cliente = await Cliente.destroy({
     where: { id: idParamCliente },
