@@ -1,34 +1,61 @@
-import { Response, Request } from 'express';
+import { Response, Request } from 'express'; //Impporta los objetos de las peticiones
 
-import Cliente from '../models/Cliente';
+import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 
 export const getAllClientes = async (req: Request, res: Response) => {
   const clientes = await Cliente.findAll();
-  res.json({
+  return res.json({
     msg: 'GetAllClientes',
     data: clientes,
   });
 };
 
-export const getOneCliente = (req: Request, res: Response) => {
-  res.json({
+export const getOneCliente = async (req: Request, res: Response) => {
+  const idParamCliente = req.params.id;
+  const cliente = await Cliente.findByPk(idParamCliente);
+
+  if (cliente === null) {
+    return res.status(404).json({
+      msg: `No se encontró el Cliente con el id: ${idParamCliente}`,
+    });
+  }
+
+  return res.json({
     msg: 'GetOneCliente',
+    data: cliente,
   });
 };
 
-export const postCliente = (req: Request, res: Response) => {
-  res.json({
+export const postCliente = async (req: Request, res: Response) => {
+  const data = req.body;
+  const nuevoCliente = await Cliente.create(data);
+  return res.json({
     msg: 'postCliente',
+    data: nuevoCliente,
   });
 };
-export const putCliente = (req: Request, res: Response) => {
-  res.json({
+export const putCliente = async (req: Request, res: Response) => {
+  const idParamCliente = req.params.id;
+  const data = req.body;
+  const clienteDB = await Cliente.findByPk(idParamCliente);
+  if (clienteDB === null) {
+    return res.status(404).json({
+      msg: `No se encontró el cliente con el id: ${idParamCliente}`,
+    });
+  }
+  await clienteDB.update(data);
+  return res.json({
     msg: 'putCliente',
+    data: clienteDB,
   });
 };
 
-export const deleteCliente = (req: Request, res: Response) => {
+export const deleteCliente = async (req: Request, res: Response) => {
+  const idParamCliente = req.params.id;
+  const cliente = await Cliente.destroy({
+    where: { id: idParamCliente },
+  });
   res.json({
-    msg: 'deleteCliente',
+    msg: `${cliente} registros borrados`,
   });
 };
