@@ -7,9 +7,11 @@ import {
   postCliente,
   putCliente,
   getNumRegistros,
+  uploadFoto,
 } from '../controllers/clientes.controller';
 const router = Router();
 
+router.post('/upload', uploadFoto);
 router.get('/top', getNumRegistros);
 router.get('/', getAllClientes);
 router.get(

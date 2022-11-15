@@ -1,7 +1,42 @@
+import { randomInt } from 'crypto';
 import { Response, Request } from 'express'; //Impporta los objetos de las peticiones
+import { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
 
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
+
+export const uploadFoto = async (req: Request, res: Response) => {
+  //let uploadedFoto: UploadedFile;
+  //
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send('No se recibió ningún archivo');
+  }
+
+  try {
+    const uploadedFoto = <UploadedFile>req.files.foto;
+    if (
+      uploadedFoto.size <= 0 ||
+      (uploadedFoto.mimetype != 'image/png' && uploadedFoto.mimetype != 'image/jpeg')
+    ) {
+      return res.status(415).json({
+        status: 415,
+        msg: 'El archivo es de tipo incorrecto, solo se permiten imagenes',
+      });
+    }
+    const uploadPath = __dirname + '/../upload/' + uploadedFoto.md5 + randomInt(1000).toString();
+    console.log(uploadFoto.name);
+    await uploadedFoto.mv(uploadPath);
+    res.json({
+      status: 200,
+      msg: `El archivo ${uploadedFoto.name} fue cargado correctamente`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      msg: error,
+    });
+  }
+};
 
 export const getNumRegistros = async (_req: Request, res: Response) => {
   const numeroRegistros = await Cliente.count();
