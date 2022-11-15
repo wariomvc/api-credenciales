@@ -3,7 +3,15 @@ import { validationResult } from 'express-validator';
 
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 
-export const getAllClientes = async (req: Request, res: Response) => {
+export const getNumRegistros = async (_req: Request, res: Response) => {
+  const numeroRegistros = await Cliente.count();
+  return res.json({
+    msg: 'getNumRegistros'
+    data: numeroRegistros,
+  });
+};
+
+export const getAllClientes = async (_req: Request, res: Response) => {
   const clientes = await Cliente.findAll();
   return res.json({
     msg: 'GetAllClientes',

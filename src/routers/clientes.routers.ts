@@ -6,9 +6,11 @@ import {
   getOneCliente,
   postCliente,
   putCliente,
+  getNumRegistros,
 } from '../controllers/clientes.controller';
 const router = Router();
 
+router.get('/top', getNumRegistros);
 router.get('/', getAllClientes);
 router.get(
   '/:id',
@@ -18,7 +20,7 @@ router.get(
 router.post(
   '/',
   [
-    body(['nombre', 'apellido', 'tutor', 'escuela, colonia,locutor'])
+    body(['nombre', 'apellido', 'tutor', 'escuela', 'colonia', 'locutor'])
       .isLength({ min: 2 })
       .withMessage(
         'Los para metros de nombre, apellido, tutor, escuela, colonia, locutor deben tener al menos 3 caracteres',

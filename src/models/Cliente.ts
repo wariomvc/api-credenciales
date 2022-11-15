@@ -7,13 +7,16 @@ const Cliente = db.define('Cliente', {
   nombre: { type: DataTypes.STRING, allowNull: false },
   apellido: { type: DataTypes.STRING, allowNull: false },
   nacimiento: { type: DataTypes.STRING, allowNull: false },
-  tutor: { type: DataTypes.STRING },
+  tutor: { type: DataTypes.STRING, allowNull: false },
   escuela: { type: DataTypes.STRING, allowNull: false },
   telefono: { type: DataTypes.STRING },
   nivel: { type: DataTypes.ENUM('Kinder', 'Primaria', 'Secundaria') },
   colonia: { type: DataTypes.STRING },
   foto: { type: DataTypes.STRING },
-  codigo: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+  codigo: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+  },
   email: { type: DataTypes.STRING, allowNull: false },
   locutor: { type: DataTypes.ENUM('Andres Oviedo', 'Deliz Guerrero', 'Jas Herrera') },
 });
