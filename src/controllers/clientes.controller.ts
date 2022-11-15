@@ -9,7 +9,10 @@ export const uploadFoto = async (req: Request, res: Response) => {
   //let uploadedFoto: UploadedFile;
   //
   if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No se recibió ningún archivo');
+    return res.status(400).json({
+      status: 400,
+      msg: 'Errores en la validación de la peticion',
+    });
   }
 
   try {
@@ -23,12 +26,14 @@ export const uploadFoto = async (req: Request, res: Response) => {
         msg: 'El archivo es de tipo incorrecto, solo se permiten imagenes',
       });
     }
-    const uploadPath = __dirname + '/../upload/' + uploadedFoto.md5 + randomInt(1000).toString();
+    const nuevoNombre = uploadedFoto.md5 + randomInt(1000).toString();
+    const uploadPath = __dirname + '/../upload/' + nuevoNombre;
     console.log(uploadFoto.name);
     await uploadedFoto.mv(uploadPath);
     res.json({
       status: 200,
       msg: `El archivo ${uploadedFoto.name} fue cargado correctamente`,
+      data: nuevoNombre,
     });
   } catch (error) {
     res.status(500).json({
@@ -41,6 +46,7 @@ export const uploadFoto = async (req: Request, res: Response) => {
 export const getNumRegistros = async (_req: Request, res: Response) => {
   const numeroRegistros = await Cliente.count();
   return res.json({
+    status: 200,
     msg: 'getNumRegistros',
     data: numeroRegistros,
   });
@@ -49,6 +55,7 @@ export const getNumRegistros = async (_req: Request, res: Response) => {
 export const getAllClientes = async (_req: Request, res: Response) => {
   const clientes = await Cliente.findAll();
   return res.json({
+    status: 200,
     msg: 'GetAllClientes',
     data: clientes,
   });
@@ -57,7 +64,9 @@ export const getAllClientes = async (_req: Request, res: Response) => {
 export const getOneCliente = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(500).json({
+    return res.status(400).json({
+      status: 400,
+      msg: 'Errores en la validación de la peticion',
       errors: errors.mapped(),
     });
   }
@@ -66,11 +75,13 @@ export const getOneCliente = async (req: Request, res: Response) => {
 
   if (cliente === null) {
     return res.status(404).json({
+      status: 404,
       msg: `No se encontró el Cliente con el id: ${idParamCliente}`,
     });
   }
 
   return res.json({
+    status: 200,
     msg: 'GetOneCliente',
     data: cliente,
   });
@@ -80,13 +91,16 @@ export const postCliente = async (req: Request, res: Response) => {
   console.log(req.body.email);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(500).json({
+    return res.status(400).json({
+      status: 400,
+      msg: 'Errores en la validación de la peticion',
       errors: errors.mapped(),
     });
   }
   const data = req.body;
   const nuevoCliente = await Cliente.create(data);
   return res.json({
+    status: 200,
     msg: 'postCliente',
     data: nuevoCliente,
   });
@@ -94,7 +108,9 @@ export const postCliente = async (req: Request, res: Response) => {
 export const putCliente = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(500).json({
+    return res.status(400).json({
+      status: 400,
+      msg: 'Errores en la validación de la peticion',
       errors: errors.mapped(),
     });
   }
@@ -103,6 +119,7 @@ export const putCliente = async (req: Request, res: Response) => {
   const clienteDB = await Cliente.findByPk(idParamCliente);
   if (clienteDB === null) {
     return res.status(404).json({
+      status: 404,
       msg: `No se encontró el cliente con el id: ${idParamCliente}`,
     });
   }
@@ -116,7 +133,9 @@ export const putCliente = async (req: Request, res: Response) => {
 export const deleteCliente = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(500).json({
+    return res.status(400).json({
+      status: 400,
+      msg: 'Errores en la validación de la peticion',
       errors: errors.mapped(),
     });
   }
@@ -125,6 +144,7 @@ export const deleteCliente = async (req: Request, res: Response) => {
     where: { id: idParamCliente },
   });
   res.json({
+    status: 200,
     msg: `${cliente} registros borrados`,
   });
 };
