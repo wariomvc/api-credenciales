@@ -1,13 +1,12 @@
 import { randomInt } from 'crypto';
 import { Response, Request } from 'express'; //Impporta los objetos de las peticiones
+
 import { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
 
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 
 export const uploadFoto = async (req: Request, res: Response) => {
-  //let uploadedFoto: UploadedFile;
-  //
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).json({
       status: 400,
@@ -26,14 +25,16 @@ export const uploadFoto = async (req: Request, res: Response) => {
         msg: 'El archivo es de tipo incorrecto, solo se permiten imagenes',
       });
     }
-    const nuevoNombre = uploadedFoto.md5 + randomInt(1000).toString();
-    const uploadPath = __dirname + '/../upload/' + nuevoNombre;
-    console.log(uploadFoto.name);
+    const nuevoNombreFoto =
+      uploadedFoto.md5 + randomInt(1000).toString() + '.' + getFileExtension(uploadedFoto.name);
+
+    const uploadPath = __dirname + '/../upload/' + nuevoNombreFoto;
+
     await uploadedFoto.mv(uploadPath);
     res.json({
       status: 200,
       msg: `El archivo ${uploadedFoto.name} fue cargado correctamente`,
-      data: nuevoNombre,
+      data: nuevoNombreFoto,
     });
   } catch (error) {
     res.status(500).json({
@@ -147,4 +148,8 @@ export const deleteCliente = async (req: Request, res: Response) => {
     status: 200,
     msg: `${cliente} registros borrados`,
   });
+};
+
+const getFileExtension = (filename: string) => {
+  return filename.slice(((filename.lastIndexOf('.') - 1) >>> 0) + 2);
 };
