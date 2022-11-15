@@ -6,7 +6,7 @@ import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el 
 export const getNumRegistros = async (_req: Request, res: Response) => {
   const numeroRegistros = await Cliente.count();
   return res.json({
-    msg: 'getNumRegistros'
+    msg: 'getNumRegistros',
     data: numeroRegistros,
   });
 };
