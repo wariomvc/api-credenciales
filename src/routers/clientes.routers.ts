@@ -62,7 +62,7 @@ router.put(
   '/:id',
   [
     check('id').isNumeric().withMessage('Error: parametro id, debe ser númerico.'),
-    body(['nombre', 'apellido', 'tutor', 'escuela, colonia,locutor'])
+    body(['nombre', 'apellido', 'tutor', 'escuela', 'colonia', 'locutor'])
       .isLength({ min: 2 })
       .withMessage(
         'Los para metros de nombre, apellido, tutor, escuela, colonia, locutor deben tener al menos 3 caracteres',
@@ -72,7 +72,7 @@ router.put(
     body('nivel')
       .isIn(['Kinder', 'Primaria', 'Secundaria'])
       .withMessage('El parametro nivel solo acepta los valores Kinder, Primaria y Secundaria'),
-    body('codigo').isInt({ min: 1000 }).withMessage('El parametro codigo debe ser minimo de 1000'),
+
     body('email').trim().isEmail().normalizeEmail({
       gmail_lowercase: true,
       gmail_remove_dots: true,
