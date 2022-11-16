@@ -8,6 +8,8 @@ import {
   putCliente,
   getNumRegistros,
   uploadFoto,
+  getOneClienteByCodigo,
+  getFoto,
 } from '../controllers/clientes.controller';
 const router = Router();
 
@@ -18,6 +20,16 @@ router.get(
   '/:id',
   check('id').isNumeric().withMessage('Error: parametro id, debe ser númerico.'),
   getOneCliente,
+);
+router.get(
+  '/codigo/:codigo',
+  check('codigo').isNumeric().withMessage('Error: parametro id, debe ser númerico.'),
+  getOneClienteByCodigo,
+);
+router.get(
+  '/foto/:codigo',
+  check('codigo').isNumeric().withMessage('Error: parametro id, debe ser númerico.'),
+  getFoto,
 );
 router.post(
   '/',

@@ -87,6 +87,33 @@ export const getOneCliente = async (req: Request, res: Response) => {
     data: cliente,
   });
 };
+export const getOneClienteByCodigo = async (req: Request, res: Response) => {
+  console.log('Entrando');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      status: 400,
+      msg: 'Errores en la validación de la peticion',
+      errors: errors.mapped(),
+    });
+  }
+  const codigoCliente = req.params.codigo;
+  console.log(codigoCliente);
+  const cliente = await Cliente.findOne({ where: { codigo: codigoCliente } });
+
+  if (cliente === null) {
+    return res.status(404).json({
+      status: 404,
+      msg: `No se encontró el Cliente con el id: ${codigoCliente}`,
+    });
+  }
+
+  return res.json({
+    status: 200,
+    msg: 'GetOneCliente',
+    data: cliente,
+  });
+};
 
 export const postCliente = async (req: Request, res: Response) => {
   console.log(req.body.email);
@@ -147,6 +174,22 @@ export const deleteCliente = async (req: Request, res: Response) => {
   res.json({
     status: 200,
     msg: `${cliente} registros borrados`,
+  });
+};
+
+export const getFoto = async (req: Request, res: Response) => {
+  const idCodigoCliente = req.params.codigo;
+  const clienteDB = await Cliente.findOne({ where: { codigo: idCodigoCliente } });
+  console.log(clienteDB);
+  const nameFoto = clienteDB?.getDataValue('foto');
+  console.log(nameFoto);
+  const pathFoto = __dirname + '/../upload/' + nameFoto;
+  res.download(pathFoto, (error) => {
+    if (error)
+      return res.status(500).json({
+        status: 500,
+        msg: 'Occurió un error al descargar la imagen',
+      });
   });
 };
 
