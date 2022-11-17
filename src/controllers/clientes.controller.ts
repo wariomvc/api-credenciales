@@ -3,9 +3,78 @@ import { Response, Request } from 'express'; //Impporta los objetos de las petic
 
 import { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
+import { PDFDocument, PDFFont, StandardFonts, rgb } from 'pdf-lib';
+import fs from 'fs/promises';
 
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 
+export const generateCredencial = async (req: Request, res: Response) => {
+  const cliente = await Cliente.findByPk(101);
+  const pdfDoc = await PDFDocument.create();
+  const file = await fs.readFile(`src/credencial.jpeg`);
+  const imgClienteFile = await fs.readFile(`src/upload/${cliente?.getDataValue('foto')}`);
+
+  const page = pdfDoc.addPage([418, 682]);
+
+  // Embed the Times Roman font
+  const timesRomanFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  page.setFont(timesRomanFont);
+
+  // Add a blank page to the document
+
+  // Get the width and height of the page
+  //const { width, height } = page.getSize();
+  //
+  const imgCliente = await pdfDoc.embedJpg(imgClienteFile);
+
+  const jpgImage = await pdfDoc.embedJpg(file);
+  const jpgDims = jpgImage.scale(1);
+  // Draw a string of text toward the top of the page
+  page.drawImage(jpgImage, {
+    x: 0,
+    y: 2,
+    width: jpgDims.width,
+    height: jpgDims.height,
+  });
+  page.drawImage(imgCliente, {
+    x: 110,
+    y: 385,
+    width: 200,
+    height: 250,
+  });
+  page.drawText(cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'), {
+    x: 50,
+    y: 355,
+    font: timesRomanFont,
+    size: 30,
+    color: rgb(0, 0, 0),
+    lineHeight: 24,
+    opacity: 1,
+  });
+  const ancho = timesRomanFont.widthOfTextAtSize(cliente?.getDataValue('tutor'), 28);
+  page.drawText(cliente?.getDataValue('tutor'), {
+    x: 209 - ancho / 2,
+    y: 315,
+    font: timesRomanFont,
+    size: 28,
+    color: rgb(0, 0, 0),
+    lineHeight: 24,
+    opacity: 1,
+  });
+  page.drawText(cliente?.getDataValue('escuela'), {
+    x: 100,
+    y: 276,
+    font: timesRomanFont,
+    size: 28,
+    color: rgb(0, 0, 0),
+    lineHeight: 24,
+    opacity: 1,
+  });
+  // Serialize the PDFDocument to bytes (a Uint8Array)
+  const pdfBytes = await pdfDoc.save();
+  fs.writeFile('nuevo.pdf', pdfBytes);
+  return res.send();
+};
 export const uploadFoto = async (req: Request, res: Response) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).json({
@@ -44,8 +113,8 @@ export const uploadFoto = async (req: Request, res: Response) => {
   }
 };
 
-export const getNumRegistros = async (_req: Request, res: Response) => {
-  const numeroRegistros = await Cliente.count();
+export const getTopCodigo = async (_req: Request, res: Response) => {
+  const numeroRegistros = await Cliente.max('codigo');
   return res.json({
     status: 200,
     msg: 'getNumRegistros',

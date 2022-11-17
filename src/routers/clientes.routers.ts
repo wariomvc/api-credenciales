@@ -6,15 +6,17 @@ import {
   getOneCliente,
   postCliente,
   putCliente,
-  getNumRegistros,
   uploadFoto,
   getOneClienteByCodigo,
   getFoto,
+  generateCredencial,
+  getTopCodigo,
 } from '../controllers/clientes.controller';
 const router = Router();
 
 router.post('/upload', uploadFoto);
-router.get('/top', getNumRegistros);
+router.get('/credencial', generateCredencial);
+router.get('/top', getTopCodigo);
 router.get('/', getAllClientes);
 router.get(
   '/:id',
