@@ -7,6 +7,7 @@ import { PDFDocument, PDFFont, StandardFonts, rgb } from 'pdf-lib';
 import fs from 'fs/promises';
 
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
+import { Op, Sequelize } from 'sequelize';
 
 export const generateCredencial = async (req: Request, res: Response) => {
   const cliente = await Cliente.findByPk(101);
@@ -259,6 +260,22 @@ export const getFoto = async (req: Request, res: Response) => {
         status: 500,
         msg: 'Occurió un error al descargar la imagen',
       });
+  });
+};
+
+export const findByText = async (req: Request, res: Response) => {
+  const textToFind = req.params.text;
+  const clientes = await Cliente.findAll({
+    where: Sequelize.or(
+      [{ codigo: { [Op.substring]: textToFind } }],
+      [{ nombre: { [Op.substring]: textToFind } }],
+    ),
+  });
+  console.log(clientes);
+  res.json({
+    status: 200,
+    msg: 'Resultado de buscar ' + textToFind,
+    data: clientes,
   });
 };
 
