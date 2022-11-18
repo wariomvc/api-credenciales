@@ -10,7 +10,7 @@ import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el 
 import { Op, Sequelize } from 'sequelize';
 
 export const generateCredencial = async (req: Request, res: Response) => {
-  const cliente = await Cliente.findByPk(101);
+  const cliente = await Cliente.findOne({ where: { codigo: 2098 } });
   const pdfDoc = await PDFDocument.create();
   const file = await fs.readFile(`src/credencial.jpeg`);
   const imgClienteFile = await fs.readFile(`src/upload/${cliente?.getDataValue('foto')}`);
@@ -18,7 +18,8 @@ export const generateCredencial = async (req: Request, res: Response) => {
   const page = pdfDoc.addPage([418, 682]);
 
   // Embed the Times Roman font
-  const timesRomanFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const timesRomanFont = await pdfDoc.embedFont(StandardFonts.Courier);
+
   page.setFont(timesRomanFont);
 
   // Add a blank page to the document
@@ -40,11 +41,15 @@ export const generateCredencial = async (req: Request, res: Response) => {
   page.drawImage(imgCliente, {
     x: 110,
     y: 385,
-    width: 200,
+    width: 190,
     height: 250,
   });
+  let ancho = timesRomanFont.widthOfTextAtSize(
+    cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'),
+    28,
+  );
   page.drawText(cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'), {
-    x: 50,
+    x: 209 - ancho / 2,
     y: 355,
     font: timesRomanFont,
     size: 30,
@@ -52,8 +57,8 @@ export const generateCredencial = async (req: Request, res: Response) => {
     lineHeight: 24,
     opacity: 1,
   });
-  const ancho = timesRomanFont.widthOfTextAtSize(cliente?.getDataValue('tutor'), 28);
-  page.drawText(cliente?.getDataValue('tutor'), {
+  ancho = timesRomanFont.widthOfTextAtSize(cliente?.getDataValue('escuela'), 28);
+  page.drawText(cliente?.getDataValue('escuela'), {
     x: 209 - ancho / 2,
     y: 315,
     font: timesRomanFont,
@@ -62,8 +67,9 @@ export const generateCredencial = async (req: Request, res: Response) => {
     lineHeight: 24,
     opacity: 1,
   });
-  page.drawText(cliente?.getDataValue('escuela'), {
-    x: 100,
+  ancho = timesRomanFont.widthOfTextAtSize(cliente?.getDataValue('codigo').toString(), 28);
+  page.drawText(cliente?.getDataValue('codigo').toString(), {
+    x: 209 - ancho / 2,
     y: 276,
     font: timesRomanFont,
     size: 28,
@@ -125,16 +131,37 @@ export const getTopCodigo = async (_req: Request, res: Response) => {
 
 export const getAllClientes = async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
-  console.log(page);
+  const textToFind = String(req.query.find || '');
+  console.log(textToFind);
   const { skip, limit } = pagination(page);
   console.log(skip, limit);
   //let limit = Number(req.query.limit);
   if (limit) {
-    const clientes = await Cliente.findAll({ offset: skip, limit });
+    const clientes = await Cliente.findAll({
+      where: Sequelize.or(
+        [{ codigo: { [Op.substring]: textToFind } }],
+        [{ nombre: { [Op.substring]: textToFind } }],
+      ),
+      offset: skip,
+      limit,
+    });
+    /* const clientes = await Cliente.findAll({
+      where: Sequelize.or(
+        [{ codigo: { [Op.substring]: textToFind } }],
+        [{ nombre: { [Op.substring]: textToFind } }],
+      ),
+    }); */
+    const countClientes = await Cliente.count({
+      where: Sequelize.or(
+        [{ codigo: { [Op.substring]: textToFind } }],
+        [{ nombre: { [Op.substring]: textToFind } }],
+      ),
+    });
     return res.json({
       status: 200,
       msg: 'GetAllClientes',
       data: clientes,
+      total: countClientes,
     });
   } else {
     const clientes = await Cliente.findAll();
@@ -147,7 +174,7 @@ export const getAllClientes = async (req: Request, res: Response) => {
 };
 
 const pagination = (page: number) => {
-  const PAGE_SIZE = 30;
+  const PAGE_SIZE = 20;
   const skip = (page - 1) * PAGE_SIZE;
   return { skip, limit: PAGE_SIZE };
 };
