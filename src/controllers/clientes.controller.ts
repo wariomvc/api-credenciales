@@ -123,15 +123,34 @@ export const getTopCodigo = async (_req: Request, res: Response) => {
   });
 };
 
-export const getAllClientes = async (_req: Request, res: Response) => {
-  const clientes = await Cliente.findAll();
-  return res.json({
-    status: 200,
-    msg: 'GetAllClientes',
-    data: clientes,
-  });
+export const getAllClientes = async (req: Request, res: Response) => {
+  const page = Number(req.query.page) || 1;
+  console.log(page);
+  const { skip, limit } = pagination(page);
+  console.log(skip, limit);
+  //let limit = Number(req.query.limit);
+  if (limit) {
+    const clientes = await Cliente.findAll({ offset: skip, limit });
+    return res.json({
+      status: 200,
+      msg: 'GetAllClientes',
+      data: clientes,
+    });
+  } else {
+    const clientes = await Cliente.findAll();
+    return res.json({
+      status: 200,
+      msg: 'GetAllClientes',
+      data: clientes,
+    });
+  }
 };
 
+const pagination = (page: number) => {
+  const PAGE_SIZE = 30;
+  const skip = (page - 1) * PAGE_SIZE;
+  return { skip, limit: PAGE_SIZE };
+};
 export const getOneCliente = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
