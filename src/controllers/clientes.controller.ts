@@ -3,85 +3,124 @@ import { Response, Request } from 'express'; //Impporta los objetos de las petic
 
 import { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
-import { PDFDocument, PDFFont, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, PDFFont, StandardFonts, rgb, PDFImage } from 'pdf-lib';
 import fs from 'fs/promises';
 
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 import { Op, Sequelize } from 'sequelize';
 
-export const generateCredencial = async (req: Request, res: Response) => {
-  const cliente = await Cliente.findOne({ where: { codigo: 2098 } });
-  const pdfDoc = await PDFDocument.create();
-  const file = await fs.readFile(`src/credencial.jpeg`);
-  const imgClienteFile = await fs.readFile(`src/upload/${cliente?.getDataValue('foto')}`);
+const path = { credenciales: 'src/assets/cred/', upload: 'src/upload/', template: 'src/assets/' };
+export const getCredencial = async (req: Request, res: Response) => {
+  console.log('get');
+  const codigoCredencial = req.params.codigo;
+  try {
+    await fs.stat(`${path.credenciales}${codigoCredencial}.pdf`);
+  } catch (e) {
+    console.log('INFO: ', e);
+    await generateCredencial(parseInt(codigoCredencial));
+  }
 
-  const page = pdfDoc.addPage([418, 682]);
-
-  // Embed the Times Roman font
-  const timesRomanFont = await pdfDoc.embedFont(StandardFonts.Courier);
-
-  page.setFont(timesRomanFont);
-
-  // Add a blank page to the document
-
-  // Get the width and height of the page
-  //const { width, height } = page.getSize();
-  //
-  const imgCliente = await pdfDoc.embedJpg(imgClienteFile);
-
-  const jpgImage = await pdfDoc.embedJpg(file);
-  const jpgDims = jpgImage.scale(1);
-  // Draw a string of text toward the top of the page
-  page.drawImage(jpgImage, {
-    x: 0,
-    y: 2,
-    width: jpgDims.width,
-    height: jpgDims.height,
-  });
-  page.drawImage(imgCliente, {
-    x: 110,
-    y: 385,
-    width: 190,
-    height: 250,
-  });
-  let ancho = timesRomanFont.widthOfTextAtSize(
-    cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'),
-    28,
+  console.log('Downloading Credencial');
+  return res.download(
+    `${path.credenciales}${codigoCredencial}.pdf`,
+    `credencial_${codigoCredencial}.pdf`,
+    (error) => {
+      console.log('Error', error);
+    },
   );
-  page.drawText(cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'), {
-    x: 209 - ancho / 2,
-    y: 355,
-    font: timesRomanFont,
-    size: 30,
-    color: rgb(0, 0, 0),
-    lineHeight: 24,
-    opacity: 1,
-  });
-  ancho = timesRomanFont.widthOfTextAtSize(cliente?.getDataValue('escuela'), 28);
-  page.drawText(cliente?.getDataValue('escuela'), {
-    x: 209 - ancho / 2,
-    y: 315,
-    font: timesRomanFont,
-    size: 28,
-    color: rgb(0, 0, 0),
-    lineHeight: 24,
-    opacity: 1,
-  });
-  ancho = timesRomanFont.widthOfTextAtSize(cliente?.getDataValue('codigo').toString(), 28);
-  page.drawText(cliente?.getDataValue('codigo').toString(), {
-    x: 209 - ancho / 2,
-    y: 276,
-    font: timesRomanFont,
-    size: 28,
-    color: rgb(0, 0, 0),
-    lineHeight: 24,
-    opacity: 1,
-  });
-  // Serialize the PDFDocument to bytes (a Uint8Array)
-  const pdfBytes = await pdfDoc.save();
-  fs.writeFile('nuevo.pdf', pdfBytes);
-  return res.send();
 };
+
+export const generateCredencial = async (codigo: number) => {
+  try {
+    const cliente = await Cliente.findOne({ where: { codigo: codigo } });
+    const pdfDoc = await PDFDocument.create();
+    const file = await fs.readFile(`${path.template}credencial.jpeg`);
+    const imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
+
+    const extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
+    const page = pdfDoc.addPage([418, 682]);
+
+    // Embed the Times Roman font
+    const courierFont = await pdfDoc.embedFont(StandardFonts.Courier);
+
+    page.setFont(courierFont);
+
+    // Add a blank page to the document
+
+    // Get the width and height of the page
+    //const { width, height } = page.getSize();
+    let imgCliente: PDFImage;
+    if (extensionImage === 'jpeg' || extensionImage === 'jpg') {
+      imgCliente = await pdfDoc.embedJpg(imgClienteFile);
+    } else {
+      imgCliente = await pdfDoc.embedPng(imgClienteFile);
+    }
+
+    const jpgImage = await pdfDoc.embedJpg(file);
+    const jpgDims = jpgImage.scale(1);
+    // Draw a string of text toward the top of the page
+    page.drawImage(jpgImage, {
+      x: 0,
+      y: 2,
+      width: jpgDims.width,
+      height: jpgDims.height,
+    });
+    page.drawImage(imgCliente, {
+      x: 110,
+      y: 385,
+      width: 190,
+      height: 250,
+    });
+    let ancho = courierFont.widthOfTextAtSize(
+      cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'),
+      28,
+    );
+    page.drawText(cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'), {
+      x: 209 - ancho / 2,
+      y: 355,
+      font: courierFont,
+      size: 30,
+      color: rgb(0, 0, 0),
+      lineHeight: 24,
+      opacity: 1,
+    });
+    ancho = courierFont.widthOfTextAtSize(cliente?.getDataValue('escuela'), 28);
+    page.drawText(cliente?.getDataValue('escuela'), {
+      x: 209 - ancho / 2,
+      y: 315,
+      font: courierFont,
+      size: 28,
+      color: rgb(0, 0, 0),
+      lineHeight: 24,
+      opacity: 1,
+    });
+    ancho = courierFont.widthOfTextAtSize(cliente?.getDataValue('codigo').toString(), 28);
+    page.drawText(cliente?.getDataValue('codigo').toString(), {
+      x: 209 - ancho / 2,
+      y: 276,
+      font: courierFont,
+      size: 28,
+      color: rgb(0, 0, 0),
+      lineHeight: 24,
+      opacity: 1,
+    });
+    // Serialize the PDFDocument to bytes (a Uint8Array)
+    const pdfBytes = await pdfDoc.save();
+    try {
+      await fs.writeFile(`${path.credenciales}${codigo}.pdf`, pdfBytes);
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+    console.log('Credencial Generada true');
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+
 export const uploadFoto = async (req: Request, res: Response) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).json({
