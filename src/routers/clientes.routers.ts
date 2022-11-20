@@ -12,11 +12,13 @@ import {
   getTopCodigo,
   findByText,
   getCredencial,
+  getMultiCredencial,
 } from '../controllers/clientes.controller';
 const router = Router();
 
 router.post('/upload', uploadFoto);
 router.get('/credencial/:codigo', getCredencial);
+router.get('/credencial/', getMultiCredencial);
 router.get('/top', getTopCodigo);
 router.get('/', getAllClientes);
 router.get('/find/:text', findByText);

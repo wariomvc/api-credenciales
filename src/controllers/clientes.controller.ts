@@ -4,12 +4,37 @@ import { Response, Request } from 'express'; //Impporta los objetos de las petic
 import { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
 import { PDFDocument, PDFFont, StandardFonts, rgb, PDFImage } from 'pdf-lib';
-import fs from 'fs/promises';
 
+import fs from 'fs/promises';
+import zip from 'adm-zip';
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 import { Op, Sequelize } from 'sequelize';
 
 const path = { credenciales: 'src/assets/cred/', upload: 'src/upload/', template: 'src/assets/' };
+
+export const getMultiCredencial = async (req: Request, res: Response) => {
+  console.log(req.body.list);
+  const listCredenciales = req.body.list as number[];
+  console.log(listCredenciales);
+  const filePackCredencialPack = new zip();
+  for (const codigo of listCredenciales) {
+    await addZip(filePackCredencialPack, codigo);
+  }
+  await filePackCredencialPack.writeZipPromise(`${path.credenciales}pack.zip`, {
+    overwrite: true,
+  });
+  res.json({
+    status: 200,
+    msg: 'Credenciales generadas y empaquetadas',
+  });
+};
+const addZip = async (zipFile: zip, codigo: number) => {
+  console.log('Codigo:', codigo);
+  await generateCredencial(codigo);
+  zipFile.addLocalFile(`${path.credenciales}${codigo}.pdf`, `${codigo}.pdf`);
+  console.log(`${path.credenciales}${codigo}.pdf`);
+  console.log('Archivo agregado');
+};
 export const getCredencial = async (req: Request, res: Response) => {
   console.log('get');
   const codigoCredencial = req.params.codigo;
