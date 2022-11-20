@@ -34,7 +34,7 @@ export const generateCredencial = async (codigo: number) => {
   try {
     const cliente = await Cliente.findOne({ where: { codigo: codigo } });
     const pdfDoc = await PDFDocument.create();
-    const file = await fs.readFile(`${path.template}credencial.jpeg`);
+    const file = await fs.readFile(`${path.template}credencialnueva.png`);
     const imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
 
     const extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
@@ -56,21 +56,22 @@ export const generateCredencial = async (codigo: number) => {
       imgCliente = await pdfDoc.embedPng(imgClienteFile);
     }
 
-    const jpgImage = await pdfDoc.embedJpg(file);
+    const jpgImage = await pdfDoc.embedPng(file);
     const jpgDims = jpgImage.scale(1);
     // Draw a string of text toward the top of the page
+    page.drawImage(imgCliente, {
+      x: 130,
+      y: 416,
+      width: 155,
+      height: 190,
+    });
     page.drawImage(jpgImage, {
       x: 0,
       y: 2,
       width: jpgDims.width,
       height: jpgDims.height,
     });
-    page.drawImage(imgCliente, {
-      x: 110,
-      y: 385,
-      width: 190,
-      height: 250,
-    });
+
     let ancho = courierFont.widthOfTextAtSize(
       cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'),
       28,
@@ -84,8 +85,14 @@ export const generateCredencial = async (codigo: number) => {
       lineHeight: 24,
       opacity: 1,
     });
-    ancho = courierFont.widthOfTextAtSize(cliente?.getDataValue('escuela'), 28);
-    page.drawText(cliente?.getDataValue('escuela'), {
+    const nacimiento = new Date(cliente?.getDataValue('nacimiento'));
+    const txtNacimiento = nacimiento.toLocaleDateString('es-ES', {
+      year: 'numeric',
+      day: 'numeric',
+      month: 'short',
+    });
+    ancho = courierFont.widthOfTextAtSize(txtNacimiento, 28);
+    page.drawText(txtNacimiento, {
       x: 209 - ancho / 2,
       y: 315,
       font: courierFont,
