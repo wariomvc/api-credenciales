@@ -12,6 +12,8 @@ import { Op, Sequelize } from 'sequelize';
 
 const path = { credenciales: 'src/assets/cred/', upload: 'src/upload/', template: 'src/assets/' };
 
+
+
 export const getMultiCredencial = async (req: Request, res: Response) => {
   console.log('GetmUltiCredencial');
   console.log(req.body);

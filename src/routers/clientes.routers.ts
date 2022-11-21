@@ -16,6 +16,7 @@ import {
 } from '../controllers/clientes.controller';
 const router = Router();
 
+
 router.post('/upload', uploadFoto);
 router.get('/credencial/:codigo', getCredencial);
 router.post('/credencial/', getMultiCredencial);
