@@ -13,9 +13,16 @@ import { Op, Sequelize } from 'sequelize';
 const path = { credenciales: 'src/assets/cred/', upload: 'src/upload/', template: 'src/assets/' };
 
 export const getMultiCredencial = async (req: Request, res: Response) => {
-  console.log(req.body.list);
+  console.log('GetmUltiCredencial');
+  console.log(req.body);
   const listCredenciales = req.body.list as number[];
-  console.log(listCredenciales);
+  console.log(listCredenciales.length);
+  if (listCredenciales.length === 0) {
+    const codigos = await Cliente.findAll({ attributes: ['codigo'] });
+    codigos.forEach((codigo) => {
+      listCredenciales.push(codigo.getDataValue('codigo'));
+    });
+  }
   const filePackCredencialPack = new zip();
   for (const codigo of listCredenciales) {
     await addZip(filePackCredencialPack, codigo);
@@ -23,15 +30,14 @@ export const getMultiCredencial = async (req: Request, res: Response) => {
   await filePackCredencialPack.writeZipPromise(`${path.credenciales}pack.zip`, {
     overwrite: true,
   });
-  res.json({
-    status: 200,
-    msg: 'Credenciales generadas y empaquetadas',
+  return res.download(`${path.credenciales}pack.zip`, `credenciales.zip`, (error) => {
+    res.end();
   });
 };
 const addZip = async (zipFile: zip, codigo: number) => {
   console.log('Codigo:', codigo);
   await generateCredencial(codigo);
-  zipFile.addLocalFile(`${path.credenciales}${codigo}.pdf`, `${codigo}.pdf`);
+  zipFile.addLocalFile(`${path.credenciales}${codigo}.pdf`);
   console.log(`${path.credenciales}${codigo}.pdf`);
   console.log('Archivo agregado');
 };
@@ -46,11 +52,12 @@ export const getCredencial = async (req: Request, res: Response) => {
   }
 
   console.log('Downloading Credencial');
-  return res.download(
+  res.download(
     `${path.credenciales}${codigoCredencial}.pdf`,
     `credencial_${codigoCredencial}.pdf`,
     (error) => {
       console.log('Error', error);
+      res.end();
     },
   );
 };

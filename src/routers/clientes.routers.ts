@@ -18,7 +18,7 @@ const router = Router();
 
 router.post('/upload', uploadFoto);
 router.get('/credencial/:codigo', getCredencial);
-router.get('/credencial/', getMultiCredencial);
+router.post('/credencial/', getMultiCredencial);
 router.get('/top', getTopCodigo);
 router.get('/', getAllClientes);
 router.get('/find/:text', findByText);
