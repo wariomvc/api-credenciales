@@ -5,10 +5,10 @@ import Cliente from '../../models/Cliente';
 class Database {
   public static db: Sequelize = new Sequelize({
     database: 'appcredenciales',
-    host: 'localhost',
+    host: process.env.DATABASEHOST,
     dialect: 'mysql',
-    username: 'root',
-    password: 'zelda128',
+    username: process.env.DBUSER,
+    password: process.env.DBPASSWORD,
   });
   constructor() {
     Database.db.modelManager.addModel(Usuario);
