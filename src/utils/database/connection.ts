@@ -1,11 +1,8 @@
 import { Sequelize } from 'sequelize';
 
 const db = new Sequelize({
-  database: 'appcredenciales',
-  host: 'localhost',
-  dialect: 'mysql',
-  username: 'root',
-  password: 'zelda128',
+  dialect: 'sqlite',
+  storage: 'database.sqlite',
 });
 
 export default db;
