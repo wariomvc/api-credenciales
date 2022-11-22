@@ -43,6 +43,7 @@
     "nodemailer": "^6.8.0",
     "pdf-lib": "^1.17.1",
     "sequelize": "^6.25.5",
-    "sequelize-typescript": "^2.1.5"
+    "sequelize-typescript": "^2.1.5",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.1/xlsx-0.19.1.tgz"
   }
 }
