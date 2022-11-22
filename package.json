@@ -50,6 +50,7 @@
     "pdf-to-png-converter": "^2.7.0",
     "sequelize": "^6.25.5",
     "sequelize-typescript": "^2.1.5",
+    "sqlite3": "^5.1.2",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.1/xlsx-0.19.1.tgz"
   }
 }

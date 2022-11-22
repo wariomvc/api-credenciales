@@ -3,12 +3,16 @@ import Usuario from '../../models/Usuario';
 import Cliente from '../../models/Cliente';
 
 class Database {
-  public static db: Sequelize = new Sequelize({
+  /* public static db: Sequelize = new Sequelize({
     database: 'appcredenciales',
-    host: process.env.DATABASEHOST,
+    host: 'localhost',
     dialect: 'mysql',
-    username: process.env.DBUSER,
-    password: process.env.DBPASSWORD,
+    username: 'root',
+    password: 'zelda128',
+  }); */
+  public static db: Sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: 'database.sqlite',
   });
   constructor() {
     Database.db.modelManager.addModel(Usuario);
