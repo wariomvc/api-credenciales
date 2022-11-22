@@ -9,8 +9,8 @@ router.get(
   check('id').isNumeric().withMessage('Error Request: El parametro id debe ser un numero'),
   sendMailAvisoRegistro,
 );
-router.get(
-  '/credencial/:id',
+router.post(
+  '/credencial',
   check('id').isNumeric().withMessage('Error Request: El parametro id debe ser un numero'),
   sendMailGetCredencial,
 );

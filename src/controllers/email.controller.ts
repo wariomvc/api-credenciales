@@ -37,7 +37,17 @@ export const sendMailAvisoRegistro = async (req: Request, res: Response) => {
   });
 };
 export const sendMailGetCredencial = async (req: Request, res: Response) => {
-  const cliente = await Cliente.findByPk(req.params.id);
+  const apellido = req.body.apellido;
+  const telefono = req.body.telefono;
+
+  const cliente = await Cliente.findOne({ where: { apellido: apellido, telefono: telefono } });
+  if (cliente === undefined) {
+    console.log('No se encuentra el cliente');
+    return res.status(404).json({
+      status: 404,
+      msg: 'No se encuentra el cliente',
+    });
+  }
   const transport = initServerMail();
   console.log('Servidor Iniciado');
   const message = generarMailGetCredencial(
@@ -50,13 +60,13 @@ export const sendMailGetCredencial = async (req: Request, res: Response) => {
   transport.sendMail(message, function (error, info) {
     if (error) {
       console.log(error);
-      res.status(500).json({
+      return res.status(500).json({
         status: 500,
         msg: 'Error',
       });
     } else {
       console.log('Email sent: ' + info.response);
-      res.json({
+      return res.json({
         status: 200,
         msg: 'Email enviado',
       });
