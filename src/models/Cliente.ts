@@ -27,7 +27,8 @@ const Cliente = db.define(
   },
 );
 
-Cliente.sync().then(() => {
+
+/* Cliente.sync().then(() => {
   console.log('Modelo Cliente Sincronizado');
-});
+}); */
 export default Cliente;

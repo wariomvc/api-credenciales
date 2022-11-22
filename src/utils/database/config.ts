@@ -1,23 +1,21 @@
 import { Sequelize } from 'sequelize-typescript';
+import Usuario from '../../models/Usuario';
+import Cliente from '../../models/Cliente';
 
 class Database {
-  public db: Sequelize;
+  public static db: Sequelize = new Sequelize({
+    database: 'appcredenciales',
+    host: 'localhost',
+    dialect: 'mysql',
+    username: 'root',
+    password: 'zelda128',
+  });
   constructor() {
-    this.db = new Sequelize({
-      database: 'appcredenciales',
-      host: 'localhost',
-      dialect: 'mysql',
-      username: 'root',
-      password: 'zelda128',
+    Database.db.modelManager.addModel(Usuario);
+    Database.db.modelManager.addModel(Cliente);
+    Database.db.sync().then(() => {
+      console.log('Todas las tablas sincronizadas');
     });
-  }
-  async connect() {
-    try {
-      await this.db.authenticate();
-      console.log('Conexion establecida con la BD');
-    } catch (error) {
-      console.error(error);
-    }
   }
 }
 
