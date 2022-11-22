@@ -8,6 +8,8 @@ import {
 } from '../controllers/email.controller';
 const router = Router();
 
+router.get('/excel', exportXLSX);
+
 router.get(
   '/:id',
   check('id').isNumeric().withMessage('Error Request: El parametro id debe ser un numero'),
@@ -18,11 +20,7 @@ router.post(
   check('id').isNumeric().withMessage('Error Request: El parametro id debe ser un numero'),
   sendMailGetCredencial,
 );
-router.post(
-  '/excel',
 
-  exportXLSX,
-);
   
   
 

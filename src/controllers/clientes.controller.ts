@@ -3,7 +3,8 @@ import { Response, Request } from 'express'; //Impporta los objetos de las petic
 
 import { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
-import { PDFDocument, PDFFont, StandardFonts, rgb, PDFImage } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb, PDFImage } from 'pdf-lib';
+import { pdfToPng, PngPageOutput } from 'pdf-to-png-converter';
 
 import fs from 'fs/promises';
 import zip from 'adm-zip';
@@ -11,8 +12,6 @@ import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el 
 import { Op, Sequelize } from 'sequelize';
 
 const path = { credenciales: 'src/assets/cred/', upload: 'src/upload/', template: 'src/assets/' };
-
-
 
 export const getMultiCredencial = async (req: Request, res: Response) => {
   console.log('GetmUltiCredencial');
@@ -43,6 +42,39 @@ const addZip = async (zipFile: zip, codigo: number) => {
   console.log(`${path.credenciales}${codigo}.pdf`);
   console.log('Archivo agregado');
 };
+
+export const getCredencialImage = async (req: Request, res: Response) => {
+  console.log('get');
+  const codigoCredencial = req.params.codigo;
+  try {
+    await fs.stat(`${path.credenciales}${codigoCredencial}.pdf`);
+  } catch (e) {
+    console.log('INFO: ', e);
+    await generateCredencial(parseInt(codigoCredencial));
+  }
+  console.log('çonvirtiendo pdf to png');
+  await convertPDftoPNG(`src/assets/cred/${codigoCredencial}.pdf`, `${codigoCredencial}`);
+  console.log('Downloading Credencial');
+
+  return res.download(
+    `${path.credenciales}${codigoCredencial}_page_1.png`,
+    `credencial.png`,
+    (error) => {
+      console.log('Descargado');
+      //res.end();
+    },
+  );
+
+  res.download(
+    `${path.credenciales}${codigoCredencial}.pdf`,
+    `credencial_${codigoCredencial}.pdf`,
+    (error) => {
+      console.log('Error', error);
+      res.end();
+    },
+  );
+};
+
 export const getCredencial = async (req: Request, res: Response) => {
   console.log('get');
   const codigoCredencial = req.params.codigo;
@@ -65,24 +97,26 @@ export const getCredencial = async (req: Request, res: Response) => {
 };
 
 export const generateCredencial = async (codigo: number) => {
+  console.log('Genrrando Credencial');
   try {
     const cliente = await Cliente.findOne({ where: { codigo: codigo } });
     const pdfDoc = await PDFDocument.create();
-    const file = await fs.readFile(`${path.template}credencialnueva.png`);
+    const templateFront = await fs.readFile(`${path.template}credencialnueva.png`);
+    const templateBack = await fs.readFile(`${path.template}credencial_back.jpeg`);
     const imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
 
     const extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
-    const page = pdfDoc.addPage([418, 682]);
+    const pageOne = pdfDoc.addPage([416, 680]);
 
     // Embed the Times Roman font
     const courierFont = await pdfDoc.embedFont(StandardFonts.Courier);
 
-    page.setFont(courierFont);
+    pageOne.setFont(courierFont);
 
-    // Add a blank page to the document
+    // Add a blank pageOne to the document
 
-    // Get the width and height of the page
-    //const { width, height } = page.getSize();
+    // Get the width and height of the pageOne
+    //const { width, height } = pageOne.getSize();
     let imgCliente: PDFImage;
     if (extensionImage === 'jpeg' || extensionImage === 'jpg') {
       imgCliente = await pdfDoc.embedJpg(imgClienteFile);
@@ -90,19 +124,19 @@ export const generateCredencial = async (codigo: number) => {
       imgCliente = await pdfDoc.embedPng(imgClienteFile);
     }
 
-    const jpgImage = await pdfDoc.embedPng(file);
-    const jpgDims = jpgImage.scale(1);
-    // Draw a string of text toward the top of the page
-    page.drawImage(imgCliente, {
+    const jpgImageFront = await pdfDoc.embedPng(templateFront);
+    const jpgDims = jpgImageFront.scale(1);
+    // Draw a string of text toward the top of the pageOne
+    pageOne.drawImage(imgCliente, {
       x: 130,
       y: 416,
       width: 155,
       height: 190,
     });
-    page.drawImage(jpgImage, {
-      x: 0,
-      y: 2,
-      width: jpgDims.width,
+    pageOne.drawImage(jpgImageFront, {
+      x: 1,
+      y: 0,
+      width: jpgDims.width + 1,
       height: jpgDims.height,
     });
 
@@ -110,7 +144,7 @@ export const generateCredencial = async (codigo: number) => {
       cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'),
       28,
     );
-    page.drawText(cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'), {
+    pageOne.drawText(cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'), {
       x: 209 - ancho / 2,
       y: 355,
       font: courierFont,
@@ -126,7 +160,7 @@ export const generateCredencial = async (codigo: number) => {
       month: 'short',
     });
     ancho = courierFont.widthOfTextAtSize(txtNacimiento, 28);
-    page.drawText(txtNacimiento, {
+    pageOne.drawText(txtNacimiento, {
       x: 209 - ancho / 2,
       y: 315,
       font: courierFont,
@@ -136,7 +170,7 @@ export const generateCredencial = async (codigo: number) => {
       opacity: 1,
     });
     ancho = courierFont.widthOfTextAtSize(cliente?.getDataValue('codigo').toString(), 28);
-    page.drawText(cliente?.getDataValue('codigo').toString(), {
+    pageOne.drawText(cliente?.getDataValue('codigo').toString(), {
       x: 209 - ancho / 2,
       y: 276,
       font: courierFont,
@@ -145,6 +179,17 @@ export const generateCredencial = async (codigo: number) => {
       lineHeight: 24,
       opacity: 1,
     });
+    const pageTwo = pdfDoc.addPage([416, 680]);
+    pageTwo.setFont(courierFont);
+    const jpgImageBack = await pdfDoc.embedJpg(templateBack);
+    const jpgDimsBack = jpgImageBack.scale(1);
+    pageTwo.drawImage(jpgImageBack, {
+      x: +1,
+      y: 0,
+      width: jpgDimsBack.width+1,
+      height: jpgDimsBack.height,
+    });
+    console.log(pdfDoc.getPageCount());
     // Serialize the PDFDocument to bytes (a Uint8Array)
     const pdfBytes = await pdfDoc.save();
     try {
@@ -160,7 +205,6 @@ export const generateCredencial = async (codigo: number) => {
     return false;
   }
 };
-
 
 export const uploadFoto = async (req: Request, res: Response) => {
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -407,4 +451,22 @@ export const findByText = async (req: Request, res: Response) => {
 
 const getFileExtension = (filename: string) => {
   return filename.slice(((filename.lastIndexOf('.') - 1) >>> 0) + 2);
+};
+
+const convertPDftoPNG = async (pdfFilePath: string, filename: string) => {
+  const pngPages: PngPageOutput[] = await pdfToPng(
+    pdfFilePath, // The function accepts PDF file path or a Buffer
+    {
+      disableFontFace: false, // When `false`, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands. Default value is true.
+      useSystemFonts: false, // When `true`, fonts that aren't embedded in the PDF document will fallback to a system font. Default value is false.
+      viewportScale: 1.0, // The desired scale of PNG viewport. Default value is 1.0.
+      outputFolder: path.credenciales, // Folder to write output PNG files. If not specified, PNG output will be available only as a Buffer content, without saving to a file.
+      outputFileMask: filename, // Output filename mask. Default value is 'buffer'.
+      pdfFilePassword: '', // Password for encrypted PDF.
+      pagesToProcess: [1], // Subset of pages to convert (first page = 1), other pages will be skipped if specified.
+      strictPagesToProcess: false, // When `true`, will throw an error if specified page number in pagesToProcess is invalid, otherwise will skip invalid page. Default value is false.
+      verbosityLevel: 5, // Verbosity level. ERRORS: 0, WARNINGS: 1, INFOS: 5. Default value is 0.
+    },
+  );
+  return pngPages;
 };
