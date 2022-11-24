@@ -425,11 +425,20 @@ export const getFoto = async (req: Request, res: Response) => {
   console.log(nameFoto);
   const pathFoto = __dirname + '/../upload/' + nameFoto;
   res.download(pathFoto, (error) => {
-    if (error)
-      return res.status(500).json({
-        status: 500,
-        msg: 'Occurió un error al descargar la imagen',
+    if (res.headersSent) {
+      console.log('Header Enviado');
+      res.json({
+        status: 200,
+        msg: 'Imagen descargada',
       });
+    } else {
+      if (error)
+        return res.status(500).json({
+          status: 500,
+          msg: 'Occurió un error al descargar la imagen',
+          data: error,
+        });
+    }
   });
 };
 
