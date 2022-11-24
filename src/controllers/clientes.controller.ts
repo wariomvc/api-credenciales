@@ -425,9 +425,9 @@ export const getFoto = async (req: Request, res: Response) => {
   console.log(nameFoto);
   const pathFoto = __dirname + '/../upload/' + nameFoto;
   res.download(pathFoto, (error) => {
-    if (res.headersSent) {
+    if (!res.headersSent) {
       console.log('Header Enviado');
-      res.json({
+      return res.json({
         status: 200,
         msg: 'Imagen descargada',
       });
