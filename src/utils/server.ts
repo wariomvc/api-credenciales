@@ -8,7 +8,7 @@ import authRoutes from '../routers/auth.routers';
 
 class Server {
   private app: Application;
-  private port: string;
+  private port: number;
   private apiPaths = {
     clientes: '/api/clientes',
     email: '/api/email',
@@ -16,7 +16,7 @@ class Server {
   };
   constructor() {
     this.app = express();
-    this.port = process.env.PORT || '3000';
+    this.port = parseInt(process.env.PORT || '3000');
     this.middlewares();
     this.routes();
   }
@@ -51,7 +51,7 @@ class Server {
     this.app.use(morgan('dev'));
   }
   listen() {
-    this.app.listen(3000, '0.0.0.0', () => {
+    this.app.listen(this.port, '0.0.0.0', () => {
       console.log('Servidor Escuchando en el puerto ' + this.port);
     });
   }
