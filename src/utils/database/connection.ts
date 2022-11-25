@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 console.log('***********',process.env.DATABASE);
-const  db: Sequelize = new Sequelize({
+const db: Sequelize = new Sequelize({
+  port: parseInt(process.env.DBPORT!),
   database: process.env.DATABASE,
   host: process.env.HOST,
   dialect: 'mysql',

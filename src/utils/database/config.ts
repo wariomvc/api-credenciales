@@ -8,7 +8,7 @@ dotenv.config();
 
 class Database {
   public static db: Sequelize = new Sequelize({
-    port: 3306,
+    port: parseInt(process.env.DBPORT!),
     database: process.env.DATABASE,
     host: process.env.HOST,
     dialect: 'mysql',
