@@ -5,13 +5,19 @@ import { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
 import { PDFDocument, StandardFonts, rgb, PDFImage } from 'pdf-lib';
 import { pdfToPng, PngPageOutput } from 'pdf-to-png-converter';
+import dotenv from 'dotenv';
 
 import fs from 'fs/promises';
 import zip from 'adm-zip';
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 import { Op, Sequelize } from 'sequelize';
 
-const path = { credenciales: 'src/assets/cred/', upload: 'src/upload/', template: 'src/assets/' };
+dotenv.config();
+const path = {
+  credenciales: `${process.env.BASEURL}/assets/cred/`,
+  upload: `${process.env.BASEURL}/upload/`,
+  template: `${process.env.BASEURL}/assets/`,
+};
 
 export const getMultiCredencial = async (req: Request, res: Response) => {
   console.log('GetmUltiCredencial');
@@ -53,7 +59,7 @@ export const getCredencialImage = async (req: Request, res: Response) => {
     await generateCredencial(parseInt(codigoCredencial));
   }
   console.log('çonvirtiendo pdf to png');
-  await convertPDftoPNG(`src/assets/cred/${codigoCredencial}.pdf`, `${codigoCredencial}`);
+  await convertPDftoPNG(`${path.credenciales}${codigoCredencial}.pdf`, `${codigoCredencial}`);
   console.log('Downloading Credencial');
 
   return res.download(

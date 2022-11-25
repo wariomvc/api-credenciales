@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev src/app.ts",
+    "build1": "tsc",
     "build": "tsc && copyfiles -u 1 \"./src/assets/**\" \"./src/upload/**\" \"./bin\" ",
     "start": "node bin/app.js"
   },
