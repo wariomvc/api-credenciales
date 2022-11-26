@@ -3,6 +3,7 @@ import Usuario from '../../models/Usuario';
 import Cliente from '../../models/Cliente';
 import Premio from '../../models/Premio';
 import dotenv from 'dotenv';
+import { createNoSubstitutionTemplateLiteral } from 'typescript';
 
 dotenv.config();
 
@@ -24,10 +25,11 @@ class Database {
   constructor() {
     console.log(Database.db.config);
     Cliente.hasMany(Premio);
+    Premio.belongsTo(Cliente);
     Database.db.modelManager.addModel(Usuario);
     Database.db.modelManager.addModel(Cliente);
     Database.db.modelManager.addModel(Premio);
-    Database.db.sync().then(() => {
+    Database.db.sync({ force: false }).then(() => {
       console.log('Todas las tablas sincronizadas');
     });
   }

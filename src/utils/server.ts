@@ -5,6 +5,7 @@ import fileUpload from 'express-fileupload';
 import clientesRoutes from '../routers/clientes.routers';
 import emailRoutes from '../routers/email.routers';
 import authRoutes from '../routers/auth.routers';
+import premiosRoutes from '../routers/premios.routers';
 
 class Server {
   private app: Application;
@@ -13,6 +14,7 @@ class Server {
     clientes: '/api/clientes',
     email: '/api/email',
     auth: '/api/auth',
+    premios: '/api/premios',
   };
   constructor() {
     this.app = express();
@@ -25,6 +27,7 @@ class Server {
     this.app.use(this.apiPaths.clientes, clientesRoutes);
     this.app.use(this.apiPaths.email, emailRoutes);
     this.app.use(this.apiPaths.auth, authRoutes);
+    this.app.use(this.apiPaths.premios, premiosRoutes);
     console.log('Agregadas las rutas');
   }
   middlewares() {
