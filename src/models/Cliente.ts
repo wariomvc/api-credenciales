@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize';
 
 import db from '../utils/database/connection';
+import Premio from './Premio';
 
 const Cliente = db.define(
   'Cliente',

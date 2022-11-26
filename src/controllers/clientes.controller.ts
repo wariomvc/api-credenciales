@@ -50,7 +50,7 @@ const addZip = async (zipFile: zip, codigo: number) => {
 };
 
 export const getCredencialImage = async (req: Request, res: Response) => {
-  console.log('get');
+  console.log('getCredencialImage');
   const codigoCredencial = req.params.codigo;
   try {
     await fs.stat(`${path.credenciales}${codigoCredencial}.pdf`);
@@ -103,7 +103,7 @@ export const getCredencial = async (req: Request, res: Response) => {
 };
 
 export const generateCredencial = async (codigo: number) => {
-  console.log('Genrrando Credencial');
+  console.log('Generando Credencial----------------');
   try {
     const cliente = await Cliente.findOne({ where: { codigo: codigo } });
     const pdfDoc = await PDFDocument.create();
@@ -192,7 +192,7 @@ export const generateCredencial = async (codigo: number) => {
     pageTwo.drawImage(jpgImageBack, {
       x: +1,
       y: 0,
-      width: jpgDimsBack.width+1,
+      width: jpgDimsBack.width + 1,
       height: jpgDimsBack.height,
     });
     console.log(pdfDoc.getPageCount());
