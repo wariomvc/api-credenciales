@@ -473,7 +473,7 @@ const convertPDftoPNG = async (pdfFilePath: string, filename: string) => {
     pdfFilePath, // The function accepts PDF file path or a Buffer
     {
       disableFontFace: false, // When `false`, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands. Default value is true.
-      useSystemFonts: true, // When `true`, fonts that aren't embedded in the PDF document will fallback to a system font. Default value is false.
+      useSystemFonts: false, // When `true`, fonts that aren't embedded in the PDF document will fallback to a system font. Default value is false.
       viewportScale: 1.0, // The desired scale of PNG viewport. Default value is 1.0.
       outputFolder: path.credenciales, // Folder to write output PNG files. If not specified, PNG output will be available only as a Buffer content, without saving to a file.
       outputFileMask: filename, // Output filename mask. Default value is 'buffer'.
