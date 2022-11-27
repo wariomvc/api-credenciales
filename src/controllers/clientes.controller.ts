@@ -52,12 +52,13 @@ const addZip = async (zipFile: zip, codigo: number) => {
 export const getCredencialImage = async (req: Request, res: Response) => {
   console.log('getCredencialImage');
   const codigoCredencial = req.params.codigo;
-  try {
+  /* try {
     await fs.stat(`${path.credenciales}${codigoCredencial}.pdf`);
   } catch (e) {
     console.log('INFO: ', e);
     await generateCredencial(parseInt(codigoCredencial));
-  }
+  } */
+  await generateCredencial(parseInt(codigoCredencial));
   console.log('çonvirtiendo pdf to png');
   await convertPDftoPNG(`${path.credenciales}${codigoCredencial}.pdf`, `${codigoCredencial}`);
   console.log('Downloading Credencial');
@@ -90,7 +91,7 @@ export const getCredencial = async (req: Request, res: Response) => {
     console.log('INFO: ', e);
     await generateCredencial(parseInt(codigoCredencial));
   }
-
+  await generateCredencial(parseInt(codigoCredencial));
   console.log('Downloading Credencial');
   res.download(
     `${path.credenciales}${codigoCredencial}.pdf`,
@@ -115,7 +116,7 @@ export const generateCredencial = async (codigo: number) => {
     const pageOne = pdfDoc.addPage([416, 680]);
 
     // Embed the Times Roman font
-    const courierFont = await pdfDoc.embedFont(StandardFonts.Courier);
+    const courierFont = await pdfDoc.embedFont(StandardFonts.CourierBold);
 
     pageOne.setFont(courierFont);
 
@@ -145,16 +146,21 @@ export const generateCredencial = async (codigo: number) => {
       width: jpgDims.width + 1,
       height: jpgDims.height,
     });
+    const nombre_completo =
+      cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido');
+    let ancho = 0;
+    let sizeFont = 30;
+    do {
+      console.log(ancho, sizeFont);
+      ancho = courierFont.widthOfTextAtSize(nombre_completo, sizeFont);
+      sizeFont--;
+    } while (ancho > 375);
 
-    let ancho = courierFont.widthOfTextAtSize(
-      cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'),
-      28,
-    );
     pageOne.drawText(cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'), {
-      x: 209 - ancho / 2,
+      x: 216 - ancho / 2,
       y: 355,
       font: courierFont,
-      size: 30,
+      size: sizeFont,
       color: rgb(0, 0, 0),
       lineHeight: 24,
       opacity: 1,
@@ -178,7 +184,7 @@ export const generateCredencial = async (codigo: number) => {
     ancho = courierFont.widthOfTextAtSize(cliente?.getDataValue('codigo').toString(), 28);
     pageOne.drawText(cliente?.getDataValue('codigo').toString(), {
       x: 209 - ancho / 2,
-      y: 276,
+      y: 270,
       font: courierFont,
       size: 28,
       color: rgb(0, 0, 0),
