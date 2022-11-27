@@ -6,6 +6,7 @@ import clientesRoutes from '../routers/clientes.routers';
 import emailRoutes from '../routers/email.routers';
 import authRoutes from '../routers/auth.routers';
 import premiosRoutes from '../routers/premios.routers';
+import usuariosRoutes from '../routers/usuarios.routers';
 
 class Server {
   private app: Application;
@@ -15,6 +16,7 @@ class Server {
     email: '/api/email',
     auth: '/api/auth',
     premios: '/api/premios',
+    usuarios: '/api/usuarios',
   };
   constructor() {
     this.app = express();
@@ -28,6 +30,7 @@ class Server {
     this.app.use(this.apiPaths.email, emailRoutes);
     this.app.use(this.apiPaths.auth, authRoutes);
     this.app.use(this.apiPaths.premios, premiosRoutes);
+    this.app.use(this.apiPaths.usuarios, usuariosRoutes);
     console.log('Agregadas las rutas');
   }
   middlewares() {
