@@ -154,7 +154,7 @@ export const generateCredencial = async (codigo: number) => {
       console.log(ancho, sizeFont);
       ancho = courierFont.widthOfTextAtSize(nombre_completo, sizeFont);
       sizeFont--;
-    } while (ancho > 375);
+    } while (ancho > 370);
 
     pageOne.drawText(cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'), {
       x: 216 - ancho / 2,
