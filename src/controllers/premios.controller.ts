@@ -14,7 +14,7 @@ export const getAllPremios = async (req: Request, res: Response) => {
     });
   }
   const idCliente = req.params.id;
-  const clienteDB = await Cliente.findByPk(idCliente, { include: Premio });
+  const clienteDB = await Cliente.findOne({ where: { codigo: idCliente }, include: Premio });
   console.log(clienteDB);
   if (clienteDB == null) {
     return res.status(404).json({
@@ -29,9 +29,19 @@ export const getAllPremios = async (req: Request, res: Response) => {
   });
 };
 
+export const deletePremio = async (req: Request, res: Response) => {
+  const premioId = req.params.id;
+  Premio.destroy({ where: { id: premioId } });
+  res.json({
+    status: 200,
+    msg: `Premio ${premioId} ha sido borrado`,
+    data: {},
+  });
+};
 export const postPremio = async (req: Request, res: Response) => {
+  console.log(req.body);
   const clienteId = req.params.id;
-  const cliente = await Cliente.findByPk(clienteId);
+  const cliente = await Cliente.findOne({ where: { codigo: clienteId } });
   const newPremio = await Premio.create(req.body);
   newPremio.setDataValue('ClienteId', cliente?.getDataValue('id'));
   newPremio.save();
