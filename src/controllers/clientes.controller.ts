@@ -91,7 +91,14 @@ export const getCredencial = async (req: Request, res: Response) => {
     console.log('INFO: ', e);
     await generateCredencial(parseInt(codigoCredencial));
   }
-  await generateCredencial(parseInt(codigoCredencial));
+  if (!(await generateCredencial(parseInt(codigoCredencial)))) {
+    console.log('No se pudó generar la credencial');
+    res.status(404).json({
+      status: 404,
+      msg: 'No fue posible generar la credencial',
+      data: {},
+    });
+  }
   console.log('Downloading Credencial');
   res.download(
     `${path.credenciales}${codigoCredencial}.pdf`,
@@ -110,8 +117,8 @@ export const generateCredencial = async (codigo: number) => {
     const pdfDoc = await PDFDocument.create();
     const templateFront = await fs.readFile(`${path.template}credencialx2.png`);
     const templateBack = await fs.readFile(`${path.template}credencial_back.jpeg`);
-    const imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
 
+    const imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
     const extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
     const pageOne = pdfDoc.addPage([826, 1358]);
 
@@ -209,7 +216,7 @@ export const generateCredencial = async (codigo: number) => {
       lineHeight: 24,
       opacity: 1,
     });
-    const pageTwo = pdfDoc.addPage([416, 680]);
+    const pageTwo = pdfDoc.addPage([826, 1358]);
     pageTwo.setFont(courierFont);
     const jpgImageBack = await pdfDoc.embedJpg(templateBack);
     const jpgDimsBack = jpgImageBack.scale(1);
