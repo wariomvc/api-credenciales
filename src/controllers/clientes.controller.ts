@@ -108,12 +108,12 @@ export const generateCredencial = async (codigo: number) => {
   try {
     const cliente = await Cliente.findOne({ where: { codigo: codigo } });
     const pdfDoc = await PDFDocument.create();
-    const templateFront = await fs.readFile(`${path.template}credencialnueva.png`);
+    const templateFront = await fs.readFile(`${path.template}credencialx2.png`);
     const templateBack = await fs.readFile(`${path.template}credencial_back.jpeg`);
     const imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
 
     const extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
-    const pageOne = pdfDoc.addPage([416, 680]);
+    const pageOne = pdfDoc.addPage([826, 1358]);
 
     // Embed the Times Roman font
     const courierFont = await pdfDoc.embedFont(StandardFonts.CourierBold);
@@ -135,10 +135,10 @@ export const generateCredencial = async (codigo: number) => {
     const jpgDims = jpgImageFront.scale(1);
     // Draw a string of text toward the top of the pageOne
     pageOne.drawImage(imgCliente, {
-      x: 130,
-      y: 416,
-      width: 155,
-      height: 190,
+      x: 260,
+      y: 832,
+      width: 310,
+      height: 380,
     });
     pageOne.drawImage(jpgImageFront, {
       x: 1,
@@ -149,16 +149,16 @@ export const generateCredencial = async (codigo: number) => {
     const nombre_completo =
       cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido');
     let ancho = 0;
-    let sizeFont = 30;
+    let sizeFont = 40;
     do {
       console.log(ancho, sizeFont);
       ancho = courierFont.widthOfTextAtSize(nombre_completo, sizeFont);
       sizeFont--;
-    } while (ancho > 370);
+    } while (ancho > 710);
 
     pageOne.drawText(cliente?.getDataValue('nombre') + ' ' + cliente?.getDataValue('apellido'), {
-      x: 216 - ancho / 2,
-      y: 355,
+      x: 432 - ancho / 2,
+      y: 710,
       font: courierFont,
       size: sizeFont,
       color: rgb(0, 0, 0),
@@ -172,39 +172,39 @@ export const generateCredencial = async (codigo: number) => {
       month: 'short',
     });
     pageOne.drawText('Cumpleaños', {
-      x: 150,
-      y: 330,
+      x: 320,
+      y: 660,
       font: courierFont,
-      size: 15,
+      size: 32,
       color: rgb(0, 0, 0),
       lineHeight: 24,
       opacity: 1,
     });
-    ancho = courierFont.widthOfTextAtSize(txtNacimiento, 28);
+    ancho = courierFont.widthOfTextAtSize(txtNacimiento, 40);
     pageOne.drawText(txtNacimiento, {
-      x: 209 - ancho / 2,
-      y: 310,
+      x: 412 - ancho / 2,
+      y: 620,
       font: courierFont,
-      size: 28,
+      size: 40,
       color: rgb(0, 0, 0),
       lineHeight: 24,
       opacity: 1,
     });
-    ancho = courierFont.widthOfTextAtSize(cliente?.getDataValue('codigo').toString(), 28);
+    ancho = courierFont.widthOfTextAtSize(cliente?.getDataValue('codigo').toString(), 40);
     pageOne.drawText('Clave:', {
-      x: 100,
-      y: 270,
+      x: 200,
+      y: 540,
       font: courierFont,
-      size: 25,
+      size: 36,
       color: rgb(0, 0, 0),
-      lineHeight: 24,
+      lineHeight: 32,
       opacity: 1,
     });
     pageOne.drawText(cliente?.getDataValue('codigo').toString(), {
-      x: 240 - ancho / 2,
-      y: 270,
+      x: 480 - ancho / 2,
+      y: 540,
       font: courierFont,
-      size: 28,
+      size: 40,
       color: rgb(0, 0, 0),
       lineHeight: 24,
       opacity: 1,
