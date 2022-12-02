@@ -171,10 +171,19 @@ export const generateCredencial = async (codigo: number) => {
       day: 'numeric',
       month: 'short',
     });
+    pageOne.drawText('Cumpleaños', {
+      x: 150,
+      y: 330,
+      font: courierFont,
+      size: 15,
+      color: rgb(0, 0, 0),
+      lineHeight: 24,
+      opacity: 1,
+    });
     ancho = courierFont.widthOfTextAtSize(txtNacimiento, 28);
     pageOne.drawText(txtNacimiento, {
       x: 209 - ancho / 2,
-      y: 315,
+      y: 310,
       font: courierFont,
       size: 28,
       color: rgb(0, 0, 0),
@@ -182,8 +191,17 @@ export const generateCredencial = async (codigo: number) => {
       opacity: 1,
     });
     ancho = courierFont.widthOfTextAtSize(cliente?.getDataValue('codigo').toString(), 28);
+    pageOne.drawText('Clave:', {
+      x: 100,
+      y: 270,
+      font: courierFont,
+      size: 25,
+      color: rgb(0, 0, 0),
+      lineHeight: 24,
+      opacity: 1,
+    });
     pageOne.drawText(cliente?.getDataValue('codigo').toString(), {
-      x: 209 - ancho / 2,
+      x: 240 - ancho / 2,
       y: 270,
       font: courierFont,
       size: 28,
