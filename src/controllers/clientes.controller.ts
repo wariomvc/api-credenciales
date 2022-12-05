@@ -253,6 +253,7 @@ export const uploadFoto = async (req: Request, res: Response) => {
 
   try {
     const uploadedFoto = <UploadedFile>req.files.foto;
+    console.log('FOTO SUBIDA:', uploadedFoto);
     if (
       uploadedFoto.size <= 0 ||
       (uploadedFoto.mimetype != 'image/png' && uploadedFoto.mimetype != 'image/jpeg')
@@ -262,6 +263,8 @@ export const uploadFoto = async (req: Request, res: Response) => {
         msg: 'El archivo es de tipo incorrecto, solo se permiten imagenes',
       });
     }
+    console.log('NOMBRE', uploadedFoto.name);
+    console.log('Extension', getFileExtension(uploadedFoto.name));
     const nuevoNombreFoto =
       uploadedFoto.md5 + randomInt(1000).toString() + '.' + getFileExtension(uploadedFoto.name);
 
