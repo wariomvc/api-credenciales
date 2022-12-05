@@ -47,7 +47,7 @@ class Server {
         debug: true,
         useTempFiles: true,
         safeFileNames: true,
-        preserveExtension: true,
+        preserveExtension: 4,
         limits: { fileSize: 5 * 1024 * 1024 },
         abortOnLimit: true,
       }),
