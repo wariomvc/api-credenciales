@@ -17,6 +17,7 @@ const path = {
   credenciales: `${process.env.BASEURL}/assets/cred/`,
   upload: `${process.env.BASEURL}/upload/`,
   template: `${process.env.BASEURL}/assets/`,
+  placeholderFoto: `${process.env.BASEURL}/assets/placeholder.jpg`,
 };
 
 export const getMultiCredencial = async (req: Request, res: Response) => {
@@ -71,15 +72,6 @@ export const getCredencialImage = async (req: Request, res: Response) => {
       //res.end();
     },
   );
-
-  res.download(
-    `${path.credenciales}${codigoCredencial}.pdf`,
-    `credencial_${codigoCredencial}.pdf`,
-    (error) => {
-      console.log('Error', error);
-      res.end();
-    },
-  );
 };
 
 export const getCredencial = async (req: Request, res: Response) => {
@@ -117,11 +109,19 @@ export const generateCredencial = async (codigo: number) => {
     const pdfDoc = await PDFDocument.create();
     const templateFront = await fs.readFile(`${path.template}credencialx2.png`);
     const templateBack = await fs.readFile(`${path.template}credencial_back.jpeg`);
+    let imgClienteFile: Buffer | undefined;
+    let extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
+    if (extensionImage != 'jpeg' && extensionImage != 'jpg' && extensionImage != 'png') {
+      console.log('Se uso placehoder');
+      imgClienteFile = await fs.readFile(path.placeholderFoto);
+      extensionImage = getFileExtension(path.placeholderFoto);
+    } else {
+      imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
+      extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
+    }
 
-    const imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
-    const extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
     const pageOne = pdfDoc.addPage([826, 1358]);
-
+    console.log('Archivos cargados');
     // Embed the Times Roman font
     const courierFont = await pdfDoc.embedFont(StandardFonts.CourierBold);
 
@@ -132,12 +132,20 @@ export const generateCredencial = async (codigo: number) => {
     // Get the width and height of the pageOne
     //const { width, height } = pageOne.getSize();
     let imgCliente: PDFImage;
+    console.log(extensionImage);
     if (extensionImage === 'jpeg' || extensionImage === 'jpg') {
+      console.log('Foto tipo jpg');
       imgCliente = await pdfDoc.embedJpg(imgClienteFile);
-    } else {
+    } else if (extensionImage === 'png') {
+      console.log('Foto tipo png');
       imgCliente = await pdfDoc.embedPng(imgClienteFile);
-    }
+    } else {
+      console.log('Usado Place Holder NO se encontro la foto');
 
+      imgCliente = await pdfDoc.embedPng(path.placeholderFoto);
+    }
+    //imgCliente = await pdfDoc.embedPng(path.placeholderFoto);
+    console.log('Continuo la ejecucion');
     const jpgImageFront = await pdfDoc.embedPng(templateFront);
     const jpgDims = jpgImageFront.scale(1);
     // Draw a string of text toward the top of the pageOne
@@ -238,7 +246,7 @@ export const generateCredencial = async (codigo: number) => {
     console.log('Credencial Generada true');
     return true;
   } catch (error) {
-    console.log(error);
+    console.log('Credencial no generada', error);
     return false;
   }
 };
