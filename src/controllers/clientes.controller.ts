@@ -1,6 +1,7 @@
 import { randomInt } from 'crypto';
 import { Response, Request } from 'express'; //Impporta los objetos de las peticiones
 
+
 import { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
 import { PDFDocument, StandardFonts, rgb, PDFImage } from 'pdf-lib';
@@ -18,6 +19,38 @@ const path = {
   upload: `${process.env.BASEURL}/upload/`,
   template: `${process.env.BASEURL}/assets/`,
   placeholderFoto: `${process.env.BASEURL}/assets/placeholder.jpg`,
+};
+
+export const getRecuperacionActivada = async (req: Request, res: Response) => {
+  const configFile = await fs.readFile('src/config.json');
+
+  const jsonConfig = configFile.toString('utf8');
+  const config = JSON.parse(jsonConfig);
+  res.json({
+    status: 200,
+    msg: 'Configuracion de recuperacion de cred',
+    data: config,
+  });
+};
+
+export const postToggleRecuperacion = async (req: Request, res: Response) => {
+  const configFile = await fs.readFile('src/config.json');
+  const jsonConfig = configFile.toString('utf8');
+  const config = JSON.parse(jsonConfig);
+  console.log(config);
+
+  config.recuperacion = !config.recuperacion;
+  console.log(config);
+  //const config = { recuperacion: }
+  await fs.writeFile('src/config.json', JSON.stringify(config, null, 2));
+
+  //const ajsonConfig = configFile.toString('utf8');
+  //const config = JSON.parse(jsonConfig);
+  res.json({
+    status: 200,
+    msg: 'Configuracion de recuperacion de cred',
+    data: config,
+  });
 };
 
 export const getMultiCredencial = async (req: Request, res: Response) => {

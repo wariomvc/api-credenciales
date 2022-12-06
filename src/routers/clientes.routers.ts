@@ -14,9 +14,13 @@ import {
   getCredencial,
   getMultiCredencial,
   getCredencialImage,
+  getRecuperacionActivada,
+  postToggleRecuperacion,
 } from '../controllers/clientes.controller';
 const router = Router();
 
+router.get('/config', getRecuperacionActivada);
+router.post('/config', postToggleRecuperacion);
 router.post('/upload', uploadFoto);
 router.get('/credencial/png/:codigo', getCredencialImage);
 router.get('/credencial/:codigo', getCredencial);
