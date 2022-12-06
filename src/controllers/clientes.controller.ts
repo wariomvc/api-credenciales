@@ -12,6 +12,7 @@ import fs from 'fs/promises';
 import zip from 'adm-zip';
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 import { Op, Sequelize } from 'sequelize';
+import { Stats } from 'fs';
 
 dotenv.config();
 const path = {
@@ -143,14 +144,30 @@ export const generateCredencial = async (codigo: number) => {
     const templateFront = await fs.readFile(`${path.template}credencialx2.png`);
     const templateBack = await fs.readFile(`${path.template}credencial_back.jpeg`);
     let imgClienteFile: Buffer | undefined;
-    let extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
-    if (extensionImage != 'jpeg' && extensionImage != 'jpg' && extensionImage != 'png') {
-      console.log('Se uso placehoder');
+    console.log('Revisando Arhcivo');
+    let existFile: Stats | undefined;
+    try {
+      existFile = await fs.stat(`${path.upload}${cliente?.getDataValue('foto')}`);
+    } catch (error) {
+      console.log(error);
+    }
+
+    let extensionImage = '';
+    console.log('Existe ARCHIVO', existFile);
+    if (existFile === undefined) {
+      console.log('No Existio la Foto');
       imgClienteFile = await fs.readFile(path.placeholderFoto);
-      extensionImage = getFileExtension(path.placeholderFoto);
-    } else {
-      imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
       extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
+    } else {
+      extensionImage = getFileExtension(path.placeholderFoto);
+      if (extensionImage != 'jpeg' && extensionImage != 'jpg' && extensionImage != 'png') {
+        console.log('Se uso placehoder');
+        imgClienteFile = await fs.readFile(path.placeholderFoto);
+        extensionImage = getFileExtension(path.placeholderFoto);
+      } else {
+        imgClienteFile = await fs.readFile(`${path.upload}${cliente?.getDataValue('foto')}`);
+        extensionImage = getFileExtension(`${path.upload}${cliente?.getDataValue('foto')}`);
+      }
     }
 
     const pageOne = pdfDoc.addPage([826, 1358]);
