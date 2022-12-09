@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { body, check } from 'express-validator';
+import { validarLogin } from '../controllers/auth.controller';
 import {
   deleteCliente,
   getAllClientes,
@@ -17,31 +18,35 @@ import {
   getRecuperacionActivada,
   postToggleRecuperacion,
 } from '../controllers/clientes.controller';
+import { validarJWT } from '../utils/validar-jwt';
 const router = Router();
 
 router.get('/config', getRecuperacionActivada);
-router.post('/config', postToggleRecuperacion);
+router.post('/config', validarJWT, postToggleRecuperacion);
 router.post('/upload', uploadFoto);
-router.get('/credencial/png/:codigo', getCredencialImage);
-router.get('/credencial/:codigo', getCredencial);
+router.get('/credencial/png/:codigo', validarJWT, getCredencialImage);
+router.get('/credencial/:codigo', validarJWT, getCredencial);
 
-router.post('/credencial/', getMultiCredencial);
+router.post('/credencial/', validarJWT, getMultiCredencial);
 router.get('/top', getTopCodigo);
-router.get('/', getAllClientes);
-router.get('/find/:text', findByText);
+router.get('/', validarJWT, getAllClientes);
+router.get('/find/:text', validarJWT, findByText);
 router.get(
   '/:id',
   check('id').isNumeric().withMessage('Error: parametro id, debe ser númerico.'),
+  validarJWT,
   getOneCliente,
 );
 router.get(
   '/codigo/:codigo',
   check('codigo').isNumeric().withMessage('Error: parametro id, debe ser númerico.'),
+  validarJWT,
   getOneClienteByCodigo,
 );
 router.get(
   '/foto/:codigo',
   check('codigo').isNumeric().withMessage('Error: parametro id, debe ser númerico.'),
+  validarJWT,
   getFoto,
 );
 router.post(
@@ -97,11 +102,13 @@ router.put(
       icloud_remove_subaddress: true,
     }),
   ],
+  validarJWT,
   putCliente,
 );
 router.delete(
   '/:id',
   check('id').isNumeric().withMessage('Error: parametro id, debe ser númerico.'),
+  validarJWT,
   deleteCliente,
 );
 
