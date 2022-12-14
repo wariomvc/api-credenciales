@@ -20,10 +20,11 @@ const path = {
   upload: `${process.env.BASEURL}/upload/`,
   template: `${process.env.BASEURL}/assets/`,
   placeholderFoto: `${process.env.BASEURL}/assets/placeholder.jpg`,
+  configFile: `${process.env.BASEURL}/assets/config.json`,
 };
 
 export const getRecuperacionActivada = async (req: Request, res: Response) => {
-  const configFile = await fs.readFile('src/config.json');
+  const configFile = await fs.readFile(path.configFile);
 
   const jsonConfig = configFile.toString('utf8');
   const config = JSON.parse(jsonConfig);
@@ -35,7 +36,7 @@ export const getRecuperacionActivada = async (req: Request, res: Response) => {
 };
 
 export const postToggleRecuperacion = async (req: Request, res: Response) => {
-  const configFile = await fs.readFile('src/config.json');
+  const configFile = await fs.readFile(path.configFile);
   const jsonConfig = configFile.toString('utf8');
   const config = JSON.parse(jsonConfig);
   console.log(config);
@@ -43,7 +44,7 @@ export const postToggleRecuperacion = async (req: Request, res: Response) => {
   config.recuperacion = !config.recuperacion;
   console.log(config);
   //const config = { recuperacion: }
-  await fs.writeFile('src/config.json', JSON.stringify(config, null, 2));
+  await fs.writeFile(path.configFile, JSON.stringify(config, null, 2));
 
   //const ajsonConfig = configFile.toString('utf8');
   //const config = JSON.parse(jsonConfig);
