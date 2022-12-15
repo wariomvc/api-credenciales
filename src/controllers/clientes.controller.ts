@@ -349,7 +349,7 @@ export const uploadFoto = async (req: Request, res: Response) => {
 };
 
 export const getTopCodigo = async (_req: Request, res: Response) => {
-  const numeroRegistros = await Cliente.max('codigo');
+  const numeroRegistros = await Cliente.max('codigo', { paranoid: false });
   return res.json({
     status: 200,
     msg: 'getNumRegistros',
