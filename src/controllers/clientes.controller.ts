@@ -132,7 +132,6 @@ export const getCredencial = async (req: Request, res: Response) => {
     `credencial_${codigoCredencial}.pdf`,
     (error) => {
       console.log('Error', error);
-      res.end();
     },
   );
 };
