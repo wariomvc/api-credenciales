@@ -27,7 +27,7 @@ export const generarMailRegistro = (
   codigo: string,
 ) => {
   const message = {
-    from: 'sender@server.com',
+    from: 'admin@exa.mediacast.mx',
     to: email,
     subject: 'Confirmacion de Registro ExaKIDS',
     text: templateRegistro(nombre, apellido, codigo).text,
@@ -35,7 +35,7 @@ export const generarMailRegistro = (
     attachments: [
       {
         filename: 'logo.png',
-        path: 'src/assets/mail/logo.png',
+        path: 'bin/assets/mail/logo.png',
         cid: 'logo', //same cid value as in the html img src
       },
     ],
@@ -50,7 +50,7 @@ export const generarMailGetCredencial = (
   codigo: string,
 ) => {
   const message = {
-    from: 'sender@server.com',
+    from: 'admin@exa.mediacast.mx',
     to: email,
     subject: 'Confirmacion de Registro ExaKIDS',
     text: templateGetCredencial(nombre, apellido).text,
@@ -58,12 +58,12 @@ export const generarMailGetCredencial = (
     attachments: [
       {
         filename: 'logo.png',
-        path: 'src/assets/mail/logo.png',
+        path: 'bin/assets/mail/logo.png',
         cid: 'logo', //same cid value as in the html img src
       },
       {
         filename: 'logo.png',
-        path: `src/assets/mail/logo.png`,
+        path: `bin/assets/mail/logo.png`,
         cid: 'credencial', //same cid value as in the html img src
       },
     ],
