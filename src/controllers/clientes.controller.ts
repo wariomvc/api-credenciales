@@ -127,7 +127,7 @@ export const getCredencial = async (req: Request, res: Response) => {
     });
   }
   console.log('Downloading Credencial');
-  res.download(
+  return res.download(
     `${path.credenciales}${codigoCredencial}.pdf`,
     `credencial_${codigoCredencial}.pdf`,
     (error) => {
