@@ -4,10 +4,10 @@ import { templateGetCredencial, templateRegistro } from './email.template';
 export const initServerMail = () => {
   const transport = nodemailer.createTransport({
     host: process.env.SMTPSERVER,
-    port: 2525,
+    port: parseInt(process.env.SMTPPORT),
     auth: {
-      user: 'd2e517784c4dd9',
-      pass: '7ac202d1a06e4e',
+      user: process.env.SMTPUSER,
+      pass: process.env.SMTPPASS,
     },
   });
   /*  transport.verify(function (error, _) {
