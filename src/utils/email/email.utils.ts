@@ -27,7 +27,7 @@ export const generarMailRegistro = (
   codigo: string,
 ) => {
   const message = {
-    from: 'admin@exa.mediacast.mx',
+    from: 'Admin ExaKids <admin@exa.mediacast.mx>',
     to: email,
     subject: 'Confirmacion de Registro ExaKIDS',
     text: templateRegistro(nombre, apellido, codigo).text,
@@ -50,7 +50,7 @@ export const generarMailGetCredencial = (
   codigo: string,
 ) => {
   const message = {
-    from: 'admin@exa.mediacast.mx',
+    from: 'Admin ExaKids <admin@exa.mediacast.mx>',
     to: email,
     subject: 'Confirmacion de Registro ExaKIDS',
     text: templateGetCredencial(nombre, apellido).text,
