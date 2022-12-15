@@ -53,8 +53,8 @@ export const exportXLSX = async (req: Request, res: Response) => {
   });
 };
 
-export const sendMailAvisoRegistro = async (req: Request, res: Response) => {
-  const cliente = await Cliente.findByPk(req.params.id);
+export const sendMailAvisoRegistro = async (id: number) => {
+  const cliente = await Cliente.findByPk(id);
   const transport = initServerMail();
   const message = generarMailRegistro(
     cliente?.getDataValue('email'),
@@ -65,12 +65,10 @@ export const sendMailAvisoRegistro = async (req: Request, res: Response) => {
   transport.sendMail(message, function (error, info) {
     if (error) {
       console.log(error);
+      return false;
     } else {
       console.log('Email sent: ' + info.response);
-      res.json({
-        status: 200,
-        msg: 'Email enviado',
-      });
+      return true;
     }
   });
 };

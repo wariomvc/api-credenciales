@@ -13,6 +13,7 @@ import zip from 'adm-zip';
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
 import { Op, Sequelize } from 'sequelize';
 import { Stats } from 'fs';
+import { sendMailAvisoRegistro } from './email.controller';
 
 dotenv.config();
 const path = {
@@ -470,9 +471,10 @@ export const postCliente = async (req: Request, res: Response) => {
   }
   const data = req.body;
   const nuevoCliente = await Cliente.create(data);
+  const email_enviado = sendMailAvisoRegistro(nuevoCliente.getDataValue('id'));
   return res.json({
     status: 200,
-    msg: 'postCliente',
+    msg: `postCliente ${email_enviado}`,
     data: nuevoCliente,
   });
 };
