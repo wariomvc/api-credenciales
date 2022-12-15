@@ -1,4 +1,3 @@
-import { Console } from 'console';
 import dotenv from 'dotenv'; //Libreria para usar variables de entorno
 
 import Database from './utils/database/config'; // Modulo que manega la configuración de la BD

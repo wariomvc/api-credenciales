@@ -184,10 +184,15 @@ export const generateCredencial = async (codigo: number) => {
     //const { width, height } = pageOne.getSize();
     let imgCliente: PDFImage;
     console.log(extensionImage);
-    if (extensionImage === 'jpeg' || extensionImage === 'jpg') {
+    if (
+      extensionImage === 'jpeg' ||
+      extensionImage === 'jpg' ||
+      extensionImage === 'JPG' ||
+      extensionImage === 'JPEG'
+    ) {
       console.log('Foto tipo jpg');
       imgCliente = await pdfDoc.embedJpg(imgClienteFile);
-    } else if (extensionImage === 'png') {
+    } else if (extensionImage === 'png' || extensionImage === 'PNG') {
       console.log('Foto tipo png');
       imgCliente = await pdfDoc.embedPng(imgClienteFile);
     } else {
