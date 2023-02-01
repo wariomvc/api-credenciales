@@ -60,7 +60,7 @@ class Server {
   }
   options = {
     key: fs.readFileSync(__dirname + '/client-key.pem'),
-    cert: fs.readFileSync(__dirname + '/client.scr'),
+    cert: fs.readFileSync(__dirname + '/client.csr'),
   };
   listen() {
     https.createServer(this.options, this.app).listen(3000);
