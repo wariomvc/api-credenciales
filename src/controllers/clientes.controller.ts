@@ -24,6 +24,17 @@ const path = {
   configFile: `${process.env.BASEURL}/assets/config.json`,
 };
 
+export const getEscuelas = async (req: Request, res: Response) => {
+  const escuelas = await Cliente.findAll({ attributes: ['escuela'], group: 'escuela' });
+
+  const lista = escuelas.map((escuela) => {
+    return escuela.getDataValue('escuela');
+  });
+  return res.json({
+    status: 200,
+    data: lista,
+  });
+};
 export const getRecuperacionActivada = async (req: Request, res: Response) => {
   const configFile = await fs.readFile(path.configFile);
 

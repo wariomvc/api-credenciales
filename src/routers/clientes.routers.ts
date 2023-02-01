@@ -17,6 +17,7 @@ import {
   getCredencialImage,
   getRecuperacionActivada,
   postToggleRecuperacion,
+  getEscuelas,
 } from '../controllers/clientes.controller';
 import { validarJWT } from '../utils/validar-jwt';
 const router = Router();
@@ -24,6 +25,7 @@ const router = Router();
 router.get('/config', getRecuperacionActivada);
 router.post('/config', validarJWT, postToggleRecuperacion);
 router.post('/upload', uploadFoto);
+router.get('/escuelas', getEscuelas);
 router.get('/credencial/png/:codigo', validarJWT, getCredencialImage);
 router.get('/credencial/:codigo', validarJWT, getCredencial);
 
