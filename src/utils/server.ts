@@ -59,8 +59,8 @@ class Server {
     this.app.use(morgan('dev'));
   }
   options = {
-    key: fs.readFileSync(__dirname + '/agent2-key.pem'),
-    cert: fs.readFileSync(__dirname + '/agent2-cert.cert'),
+    key: fs.readFileSync(__dirname + '/client-key.pem'),
+    cert: fs.readFileSync(__dirname + '/client.scr'),
   };
   listen() {
     https.createServer(this.options, this.app).listen(3000);
