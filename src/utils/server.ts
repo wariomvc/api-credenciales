@@ -7,6 +7,8 @@ import emailRoutes from '../routers/email.routers';
 import authRoutes from '../routers/auth.routers';
 import premiosRoutes from '../routers/premios.routers';
 import usuariosRoutes from '../routers/usuarios.routers';
+import https from 'https';
+import fs from 'fs';
 
 class Server {
   private app: Application;
@@ -56,10 +58,16 @@ class Server {
     this.app.use(express.json());
     this.app.use(morgan('dev'));
   }
+  options = {
+    key: fs.readFileSync(__dirname + '/agent2-key.pem'),
+    cert: fs.readFileSync(__dirname + '/agent2-cert.cert'),
+  };
   listen() {
-    this.app.listen(this.port, '0.0.0.0', () => {
+    https.createServer(this.options, this.app).listen(3000);
+
+    /* this.app.listen(this.port, '0.0.0.0', () => {
       console.log('Servidor Escuchando en el puerto ' + this.port);
-    });
+    }); */
   }
 }
 
