@@ -64,7 +64,7 @@ export const sendMailAvisoRegistro = async (id: number) => {
   );
   transport.sendMail(message, function (error, info) {
     if (error) {
-      console.log(error);
+      console.log('Correo No Enviado:', error);
       return false;
     } else {
       console.log('Email sent: ' + info.response);
@@ -94,7 +94,7 @@ export const sendMailGetCredencial = async (req: Request, res: Response) => {
     cliente?.getDataValue('apellido'),
     cliente?.getDataValue('codigo'),
   );
-  console.log('Mensage generado');
+  console.log('Mensaje generado');
   transport.sendMail(message, function (error, info) {
     if (error) {
       console.log(error);
