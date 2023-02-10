@@ -67,7 +67,7 @@ export const sendMailAvisoRegistro = async (id: number) => {
       console.log('Correo No Enviado:', error);
       return false;
     } else {
-      console.log('Email sent: ' + info.response);
+      console.log('Email sent: ' + info.response + message.to);
       return true;
     }
   });
