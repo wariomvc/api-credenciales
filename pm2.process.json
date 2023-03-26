@@ -1,0 +1,25 @@
+{
+  "apps": [
+    {
+      "name": "API",
+      "script": "./bin/app.js",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "ignore_watch": ["./dist/tmp"],
+      "env": {
+        "PORT": "3000",
+        "JWT_KEY": "'adddoqdj0283d0u930238em908d0239dujlaskjd2o93mudo3iur40395u0ijfsklcjlzkru'",
+        "SMTPSERVER": "exa.mediacast.mx",
+        "SMTPPORT": "465",
+        "SMTPUSER": "admin@exa.mediacast.mx",
+        "SMTPPASS": "JuR&r+yX-b8{",
+        "DATABASE": "appcredenciales",
+        "HOST": "localhost",
+        "DBUSER": "'root'",
+        "PASSWORD": "zelda128",
+        "BASEURL": "src",
+        "DBPORT": "3306"
+      }
+    }
+  ]
+}
