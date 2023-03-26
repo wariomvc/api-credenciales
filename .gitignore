@@ -2,3 +2,4 @@ node_modules
 bin
 src/upload
 src/assets/cred
+.env
