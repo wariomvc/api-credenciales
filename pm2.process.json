@@ -15,8 +15,8 @@
         "SMTPPASS": "JuR&r+yX-b8{",
         "DATABASE": "appcredenciales",
         "HOST": "localhost",
-        "DBUSER": "'root'",
-        "PASSWORD": "zelda128",
+        "DBUSER": "usernormal",
+        "PASSWORD": "qzMKascP12()",
         "BASEURL": "src",
         "DBPORT": "3306"
       }
