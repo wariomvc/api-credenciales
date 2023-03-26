@@ -4,14 +4,14 @@ import { Response, Request } from 'express'; //Impporta los objetos de las petic
 
 import { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
-import { PDFDocument, StandardFonts, rgb, PDFImage } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb, PDFImage, cleanText } from 'pdf-lib';
 import { pdfToPng, PngPageOutput } from 'pdf-to-png-converter';
 import dotenv from 'dotenv';
 
 import fs from 'fs/promises';
 import zip from 'adm-zip';
 import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el maneja de la tabla
-import { Op, Sequelize } from 'sequelize';
+import { Op, Sequelize, where } from 'sequelize';
 import { Stats } from 'fs';
 import { sendMailAvisoRegistro } from './email.controller';
 
@@ -441,6 +441,32 @@ export const getOneCliente = async (req: Request, res: Response) => {
     msg: 'GetOneCliente',
     data: cliente,
   });
+};
+export const setImpresas = async (req: Request, res: Response) => {
+  const listCredenciales = req.body.list as number[];
+  console.log(listCredenciales);
+  const updated = await Cliente.update({ generado: true }, { where: { codigo: listCredenciales } });
+  console.log(updated);
+  return res.json(updated);
+};
+export const getOneClientByEmail = async (req: Request, res: Response) => {
+  console.log('GetOneClientByEmail');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      status: 400,
+      msg: 'Errores en la validación de la peticion',
+      errors: errors.mapped(),
+    });
+  }
+  const data = req.body;
+  console.log(data.email);
+  const cliente = await Cliente.findOne({ where: { email: data.email } });
+  if (cliente === null) {
+    return res.status(404).json({ msg: 'Error: No se encontro el cliente' });
+  }
+
+  return res.json(cliente);
 };
 export const getOneClienteByCodigo = async (req: Request, res: Response) => {
   console.log('Entrando');

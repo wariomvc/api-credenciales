@@ -18,6 +18,8 @@ import {
   getRecuperacionActivada,
   postToggleRecuperacion,
   getEscuelas,
+  getOneClientByEmail,
+  setImpresas,
 } from '../controllers/clientes.controller';
 import { validarJWT } from '../utils/validar-jwt';
 const router = Router();
@@ -45,6 +47,16 @@ router.get(
   validarJWT,
   getOneClienteByCodigo,
 );
+router.post(
+  '/info',
+  body('email')
+    .notEmpty()
+    .withMessage('error. NO existe el campo email')
+    .isEmail()
+    .withMessage('No tiene formato de email'),
+  getOneClientByEmail,
+);
+router.post('/impresas', setImpresas);
 router.get(
   '/foto/:codigo',
   check('codigo').isNumeric().withMessage('Error: parametro id, debe ser númerico.'),

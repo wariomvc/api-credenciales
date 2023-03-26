@@ -22,7 +22,9 @@ const Cliente = db.define(
     },
     email: { type: DataTypes.STRING, allowNull: false },
     locutor: { type: DataTypes.ENUM('Andres Oviedo', 'Deliz Guerrero', 'Jas Herrera') },
+    generado: { type: DataTypes.BOOLEAN, defaultValue: false },
   },
+
   {
     paranoid: true,
   },

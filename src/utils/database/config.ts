@@ -29,7 +29,7 @@ class Database {
     Database.db.modelManager.addModel(Usuario);
     Database.db.modelManager.addModel(Cliente);
     Database.db.modelManager.addModel(Premio);
-    Database.db.sync({ force: false }).then(() => {
+    Database.db.sync({ alter: true }).then(() => {
       console.log('Todas las tablas sincronizadas');
     });
   }
