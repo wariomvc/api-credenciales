@@ -17,7 +17,7 @@
         "HOST": "localhost",
         "DBUSER": "usernormal",
         "PASSWORD": "qzMKascP12()",
-        "BASEURL": "src",
+        "BASEURL": "bin",
         "DBPORT": "3306"
       }
     }
