@@ -14,6 +14,8 @@ import Cliente from '../models/Cliente'; //Importa el modelo de Cliente para el 
 import { Op, Sequelize, where } from 'sequelize';
 import { Stats } from 'fs';
 import { sendMailAvisoRegistro } from './email.controller';
+import { generarMailImpresion, initServerMail } from '../utils/email/email.utils';
+import { templateImpresion } from '../utils/email/email.template';
 
 dotenv.config();
 const path = {
@@ -445,6 +447,26 @@ export const getOneCliente = async (req: Request, res: Response) => {
 export const setImpresas = async (req: Request, res: Response) => {
   const listCredenciales = req.body.list as number[];
   console.log(listCredenciales);
+  const clientes = await Cliente.findAll({ where: { codigo: listCredenciales } });
+  const transport = initServerMail();
+  clientes.forEach((cliente) => {
+    const message = generarMailImpresion(
+      cliente.getDataValue('email'),
+      cliente.getDataValue('nombre'),
+      cliente.getDataValue('apellido'),
+      cliente.getDataValue('codigo'),
+    );
+    console.log('EMAIL:', cliente.getDataValue('email'));
+    transport.sendMail(message, function (error, info) {
+      if (error) {
+        console.log('Correo No Enviado:', error);
+        return false;
+      } else {
+        console.log('Email sent: ' + JSON.stringify(info));
+        return true;
+      }
+    });
+  });
   const updated = await Cliente.update({ generado: true }, { where: { codigo: listCredenciales } });
   console.log(updated);
   return res.json(updated);

@@ -28,6 +28,28 @@ export const templateRegistro = (nombre: string, apellido: string, codigo: strin
   };
 };
 
+export const templateImpresion = (nombre: string, apellido: string, codigo: string) => {
+  return {
+    text: `${nombre} ${apellido} Tu Credencial ya esta impresa.`,
+    html: ` <div style="width: 80%; margin: 20px auto; text-align: center">
+        <div
+          style="
+            width: 50%;
+            margin: 20px auto;
+            background-color: rgb(220, 68, 16);
+            border-radius: 30px;
+          "
+        >
+          <img src="cid:logo" alt="exakids logo"  style="width: 50%" />
+        </div>
+        <div style="width: 50%; margin: auto">
+          <h1>Te informamos que tu credencial ya fue impresa</h1>
+          <p>Puedes pasar a recogerla.</p>
+        </div>
+      </div>`,
+  };
+};
+
 export const templateGetCredencial = (nombre: string, apellido: string) => {
   return {
     text: `${nombre} ${apellido} te hemos enviado tu credencial  Club de Exa KIDS en este correo. Puedes descargarla e imprimirla .`,

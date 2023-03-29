@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { templateGetCredencial, templateRegistro } from './email.template';
+import { templateGetCredencial, templateImpresion, templateRegistro } from './email.template';
 
 export const initServerMail = () => {
   const transport = nodemailer.createTransport({
@@ -19,7 +19,28 @@ export const initServerMail = () => {
   }); */
   return transport;
 };
-
+export const generarMailImpresion = (
+  email: string,
+  nombre: string,
+  apellido: string,
+  codigo: string,
+) => {
+  const message = {
+    from: 'Admin ExaKids <admin@exa.mediacast.mx>',
+    to: email,
+    subject: 'Credencial Impresa ExaKIDS',
+    text: templateImpresion(nombre, apellido, codigo).text,
+    html: templateImpresion(nombre, apellido, codigo).html,
+    attachments: [
+      {
+        filename: 'logo.png',
+        path: 'bin/assets/mail/logo.png',
+        cid: 'logo', //same cid value as in the html img src
+      },
+    ],
+  };
+  return message;
+};
 export const generarMailRegistro = (
   email: string,
   nombre: string,
