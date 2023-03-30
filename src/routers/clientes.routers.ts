@@ -72,21 +72,11 @@ router.post(
         'Los para metros de nombre, apellido, tutor, escuela, colonia, locutor deben tener al menos 3 caracteres',
       ),
     body('nacimiento').isDate().withMessage('El parametro nacimiento debe ser una fecha valida'),
-    body('telefono').whitelist('123456789'),
+
     body('nivel')
       .isIn(['Kinder', 'Primaria', 'Secundaria'])
       .withMessage('El parametro nivel solo acepta los valores Kinder, Primaria y Secundaria'),
     body('codigo').isInt({ min: 1000 }).withMessage('El parametro codigo debe ser minimo de 1000'),
-    body('email').trim().isEmail().normalizeEmail({
-      gmail_lowercase: true,
-      gmail_remove_dots: true,
-      outlookdotcom_lowercase: true,
-      outlookdotcom_remove_subaddress: true,
-      yahoo_lowercase: true,
-      yahoo_remove_subaddress: true,
-      icloud_lowercase: true,
-      icloud_remove_subaddress: true,
-    }),
   ],
   postCliente,
 );
