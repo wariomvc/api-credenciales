@@ -14,6 +14,7 @@ import {
   generarMailGetCredencial,
   generarMailRegistro,
   initServerMail,
+  loadEmailInfo,
 } from '../utils/email/email.utils';
 import { rmSync } from 'fs';
 import Database from '../utils/database/config';
@@ -143,6 +144,10 @@ interface Email {
   filename?: string;
 }
 
+export const loadEmailData = async (req: Request, res: Response) => {
+  const data = loadEmailInfo();
+  return res.json(data);
+};
 export const updateEmailInfo = async (req: Request, res: Response) => {
   let image: UploadedFile;
   if (req.files != undefined) {

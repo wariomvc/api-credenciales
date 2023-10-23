@@ -102,7 +102,7 @@ interface Email {
   cuerpo: string;
   filename?: string;
 }
-const loadEmailInfo = () => {
+export const loadEmailInfo = () => {
   const fileData = fs.readFileSync(path.join(mailAssetsDir, 'emailinfo.json'), 'utf8');
   const object = JSON.parse(fileData) as Email;
   return object;

@@ -4,6 +4,7 @@ import { check } from 'express-validator';
 import {
   PruebaAvisoRegistro,
   exportXLSX,
+  loadEmailData,
   sendMailAvisoRegistro,
   sendMailGetCredencial,
   updateEmailInfo,
@@ -11,12 +12,18 @@ import {
 const router = Router();
 
 router.get('/excel', exportXLSX);
-
+router.get(
+  '/info',
+  check('id').isNumeric().withMessage('Error Request: El parametro id debe ser un numero'),
+  loadEmailData,
+);
 router.get(
   '/:id',
   check('id').isNumeric().withMessage('Error Request: El parametro id debe ser un numero'),
   PruebaAvisoRegistro,
 );
+
+
 router.post(
   '/credencial',
   check('id').isNumeric().withMessage('Error Request: El parametro id debe ser un numero'),
