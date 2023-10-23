@@ -1,5 +1,9 @@
 import nodemailer from 'nodemailer';
 import { templateGetCredencial, templateImpresion, templateRegistro } from './email.template';
+import fs from 'fs';
+import path from 'path';
+
+const mailAssetsDir = path.join(__dirname, '../../../assets');
 
 export const initServerMail = () => {
   const transport = nodemailer.createTransport({
@@ -47,16 +51,17 @@ export const generarMailRegistro = (
   apellido: string,
   codigo: string,
 ) => {
+  const info = loadEmailInfo();
   const message = {
     from: 'Admin ExaKids <admin@exa.mediacast.mx>',
     to: email,
-    subject: 'Confirmacion de Registro ExaKIDS',
-    text: templateRegistro(nombre, apellido, codigo).text,
-    html: templateRegistro(nombre, apellido, codigo).html,
+    subject: info.asunto,
+    text: templateRegistro(nombre, apellido, codigo, info.cuerpo).text,
+    html: templateRegistro(nombre, apellido, codigo, info.cuerpo).html,
     attachments: [
       {
-        filename: 'logo.png',
-        path: 'bin/assets/mail/logo.png',
+        filename: 'logo.jpg',
+        path: path.join(mailAssetsDir, 'logo.jpg'),
         cid: 'logo', //same cid value as in the html img src
       },
     ],
@@ -90,4 +95,15 @@ export const generarMailGetCredencial = (
     ],
   };
   return message;
+};
+
+interface Email {
+  asunto: string;
+  cuerpo: string;
+  filename?: string;
+}
+const loadEmailInfo = () => {
+  const fileData = fs.readFileSync(path.join(mailAssetsDir, 'emailinfo.json'), 'utf8');
+  const object = JSON.parse(fileData) as Email;
+  return object;
 };

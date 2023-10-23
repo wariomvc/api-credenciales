@@ -1,7 +1,7 @@
 import { Response, Request } from 'express'; //Impporta los objetos de las peticiones
 import nodemailer from 'nodemailer';
 import { templateRegistro, templateGetCredencial } from '../utils/email/email.template';
-import { UploadedFile } from 'express-fileupload';
+import fileUpload, { UploadedFile } from 'express-fileupload';
 import { validationResult } from 'express-validator';
 import { PDFDocument, PDFFont, StandardFonts, rgb, PDFImage } from 'pdf-lib';
 import * as XLSX from 'xlsx';
@@ -17,8 +17,11 @@ import {
 } from '../utils/email/email.utils';
 import { rmSync } from 'fs';
 import Database from '../utils/database/config';
+import { verifyOrCreateDir } from '../utils/utils.funcionts';
+import path from 'path';
 
 const pathExcelFile = 'src/assets/cred';
+const mailAssetsDir = path.join(__dirname, '../../assets');
 
 export const exportXLSX = async (req: Request, res: Response) => {
   console.log('Exportando');
@@ -49,6 +52,26 @@ export const exportXLSX = async (req: Request, res: Response) => {
         msg: 'Error al descargar el archivo',
         data: err,
       });
+    }
+  });
+};
+
+export const PruebaAvisoRegistro = async (req: Request, res: Response) => {
+  const cliente = await Cliente.findByPk(req.params.id);
+  const transport = initServerMail();
+  const message = generarMailRegistro(
+    cliente?.getDataValue('email'),
+    cliente?.getDataValue('nombre'),
+    cliente?.getDataValue('apellido'),
+    cliente?.getDataValue('codigo'),
+  );
+  transport.sendMail(message, function (error, info) {
+    if (error) {
+      console.log('Correo No Enviado:', error);
+      return res.json(false);
+    } else {
+      console.log('Email sent: ' + info.response + message.to);
+      return res.json(true);
     }
   });
 };
@@ -112,4 +135,24 @@ export const sendMailGetCredencial = async (req: Request, res: Response) => {
       });
     }
   });
+};
+
+interface Email {
+  asunto: string;
+  cuerpo: string;
+  filename?: string;
+}
+
+export const updateEmailInfo = async (req: Request, res: Response) => {
+  let image: UploadedFile;
+  if (req.files != undefined) {
+    image = req.files.file as UploadedFile;
+    verifyOrCreateDir(mailAssetsDir);
+    await image.mv(path.join(mailAssetsDir, 'logo.jpg'));
+  }
+
+  const data: Email = { asunto: req.body['asunto'], cuerpo: req.body['cuerpo'] };
+
+  await fs.writeFile(path.join(mailAssetsDir, 'emailinfo.json'), JSON.stringify(data), 'utf8');
+  return res.json(data);
 };
