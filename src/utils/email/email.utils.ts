@@ -7,6 +7,7 @@ const mailAssetsDir = path.join(__dirname, '../../../assets');
 
 export const initServerMail = () => {
   const transport = nodemailer.createTransport({
+    secure: false,
     host: process.env.SMTPSERVER,
     port: parseInt(process.env.SMTPPORT!),
     auth: {
@@ -53,7 +54,7 @@ export const generarMailRegistro = (
 ) => {
   const info = loadEmailInfo();
   const message = {
-    from: 'Admin ExaKids <admin@exa.mediacast.mx>',
+    from: 'Promociones ExaKids <promociones@digitalradio.mx>',
     to: email,
     subject: info.asunto,
     text: templateRegistro(nombre, apellido, codigo, info.cuerpo).text,

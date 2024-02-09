@@ -7,10 +7,11 @@ import {
   loadEmailData,
   sendMailAvisoRegistro,
   sendMailGetCredencial,
+  test,
   updateEmailInfo,
 } from '../controllers/email.controller';
 const router = Router();
-
+router.get('/test', test);
 router.get('/excel', exportXLSX);
 router.get(
   '/info',

@@ -96,6 +96,24 @@ export const sendMailAvisoRegistro = async (id: number) => {
     }
   });
 };
+export const test = async (req: Request, res: Response) => {
+  const transport = initServerMail();
+  const a = await transport.sendMail(
+    {
+      from: 'promociones@digitalradio.mx',
+      to: 'wario.mvc@gmail.com',
+      text: 'Esta es una prueba',
+      subject: 'Prueba de nodemailer',
+    },
+    (error, info) => {
+      if (error) console.log(error);
+      else {
+        console.log(info);
+      }
+    },
+  );
+  res.json(a);
+};
 export const sendMailGetCredencial = async (req: Request, res: Response) => {
   const apellido = req.body.apellido;
   const telefono = req.body.telefono;
