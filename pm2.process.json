@@ -15,8 +15,8 @@
         "SMTPPASS": "BKSLh/NzJpAzuws/8AbbnbaEA05bhNmhVGIQ56tHGQLZ",
         "DATABASE": "appcredenciales",
         "HOST": "localhost",
-        "DBUSER": "usernormal",
-        "PASSWORD": "qzMKascP12()",
+        "DBUSER": "root",
+        "PASSWORD": "mGJVxGGY3n0ka7n/&",
         "BASEURL": "bin",
         "DBPORT": "3306"
       }
